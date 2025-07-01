@@ -15,17 +15,20 @@ services:
       - esdata:/usr/share/elasticsearch/data
     networks:
       - spring-boot-network
+
+  # PostgreSQL 서비스
   db:
     image: postgres:16-alpine
     container_name: postgres_db
     environment:
-      POSTGRES_DB: any_db
+      POSTGRES_DB: ady_db
       POSTGRES_USER: any
       POSTGRES_PASSWORD: any
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - dbdata:/var/lib/postgresql/data
+    networks:
       - spring-boot-network
 
 volumes:
@@ -33,5 +36,5 @@ volumes:
   dbdata:
 
 networks:
-  spring-boot-network: # 서비스 간 통신을 위한 사용자 정의 네트워크
+  spring-boot-network:
     driver: bridge
