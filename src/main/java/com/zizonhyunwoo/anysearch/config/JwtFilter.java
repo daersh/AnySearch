@@ -33,6 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return; // 필터 통과 (토큰 없음)
             }
+            token = token.substring(7);
             checkToken(token);
             addContext(token);
 
@@ -64,8 +65,8 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private void checkToken(String token) throws ServletException {
-        if (!jwtUtil.isExpired(token) & jwtUtil.parseJwt(token,"type").equals("access")) {
-
+        if (jwtUtil.isExpired(token) || !jwtUtil.parseJwt(token,"type").equals("access")) {
+            System.out.println("token is expired");
             throw new ServletException("access token error");
         }
     }

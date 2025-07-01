@@ -3,6 +3,7 @@ package com.zizonhyunwoo.anysearch.service.impl;
 import com.zizonhyunwoo.anysearch.dao.UserDao;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,12 +30,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserInfo saveUser(UserInfo userInfo) {
-
+        System.out.println("userInfo = " + userInfo);
         return userDao.save(userInfo);
     }
 
     @Override
+    @Transactional
     public UserInfo updateUser(UserInfo userInfo) {
         UserInfo user = userDao.findByNickname(userInfo.getNickname());
         UserInfo newUser = userDao.save(new UserInfo(
@@ -49,6 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteUser(String userNickname) {
         userDao.deleteByNickname(userNickname);
         return null;
