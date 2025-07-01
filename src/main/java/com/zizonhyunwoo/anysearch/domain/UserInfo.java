@@ -19,17 +19,17 @@ import java.util.UUID;
 public class UserInfo {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id",unique = true,nullable = false)
     UUID id;
-    @Column(name = "name")
+    @Column(name = "name",nullable = false)
     String name;
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     String password;
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     String email;
-    @Column(name = "nickname")
+    @Column(name = "nickname", nullable = false, unique = true)
     String nickname;
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     String role;
 
     public UserInfo(String name, String password, String email, String nickname) {
@@ -39,11 +39,11 @@ public class UserInfo {
         this.nickname = nickname;
     }
 
-    public UserInfo(String userName, String s, String userEmail, String userNickname, String userRole) {
-        this.name = name;
+    public UserInfo(String userName, String password, String userEmail, String userNickname, String userRole) {
+        this.name = userName;
         this.password =  PasswordEncoder.encode(password);
-        this.email = email;
-        this.nickname = nickname;
+        this.email = userEmail;
+        this.nickname = userNickname;
         this.role = userRole;
     }
 }

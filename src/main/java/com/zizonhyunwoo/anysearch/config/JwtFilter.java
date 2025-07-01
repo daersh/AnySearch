@@ -14,8 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -30,15 +28,17 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String token = request.getParameter("Authorization").substring(7);
-
+            String token = request.getHeader("Authorization");
+            if (token == null || !token.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return; // 필터 통과 (토큰 없음)
+            }
             checkToken(token);
             addContext(token);
 
             filterChain.doFilter(request, response);
             System.out.println("token check finished");
         }catch (Exception e) {
-
             PrintWriter printWriter = response.getWriter();
             printWriter.print("token error");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -64,8 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private void checkToken(String token) throws ServletException {
-        if (!jwtUtil.isExpired(token) &
-            jwtUtil.parseJwt(token,"type").equals("access")) {
+        if (!jwtUtil.isExpired(token) & jwtUtil.parseJwt(token,"type").equals("access")) {
 
             throw new ServletException("access token error");
         }
