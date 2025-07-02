@@ -25,7 +25,7 @@ public class JwtUtil {
     }
 
     public String createJwt(UserInfo userInfo, String type){
-        return "Bearer "+Jwts.builder()
+        return Jwts.builder()
                 .claim("user_name", userInfo.getName())
                 .claim("user_email", userInfo.getEmail())
                 .claim("user_nickname", userInfo.getNickname())

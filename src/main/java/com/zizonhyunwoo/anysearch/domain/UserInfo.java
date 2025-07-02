@@ -34,14 +34,14 @@ public class UserInfo {
 
     public UserInfo(String name, String password, String email, String nickname) {
         this.name = name;
-        this.password =  PasswordEncoder.encode(password);
+        this.password = password;
         this.email = email;
         this.nickname = nickname;
     }
 
     public UserInfo(String userName, String password, String userEmail, String userNickname, String userRole) {
         this.name = userName;
-        this.password =  PasswordEncoder.encode(password);
+        this.password = password;
         this.email = userEmail;
         this.nickname = userNickname;
         this.role = userRole;

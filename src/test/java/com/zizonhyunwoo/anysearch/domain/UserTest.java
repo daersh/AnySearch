@@ -22,7 +22,7 @@ public class UserTest {
         public User(String name, String password, String email, String nickname) {
             id = UUID.randomUUID();
             this.name = name;
-            this.password =  PasswordEncoder.encode(password);
+            this.password =  password;
             this.email = email;
             this.nickname = nickname;
         }
@@ -59,17 +59,19 @@ public class UserTest {
     @Test
     @DisplayName("사용자로그인")
     void 사용자_로그인_성공(){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
         String name="user Name";
         String password="user Password";
         String email="user Email";
         String nickname="user Nickname";
-        User user = new User(name,password,email,nickname);
+        User user = new User(name,encoder.encode(password),email,nickname);
 
         String loginEmail="user Email";
         String loginPassword="user Password";
 
         assertEquals(loginEmail, user.email);
-        assertTrue(PasswordEncoder.match(password,user.password));
+        assertTrue(encoder.matches(password,user.password));
         assertNotEquals(loginPassword, user.password);
     }
 

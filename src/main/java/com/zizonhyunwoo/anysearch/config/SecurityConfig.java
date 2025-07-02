@@ -1,6 +1,7 @@
 package com.zizonhyunwoo.anysearch.config;
 
 import com.zizonhyunwoo.anysearch.util.JwtUtil;
+import com.zizonhyunwoo.anysearch.util.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)throws Exception{
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new PasswordEncoder();
     }
 
     @Bean
