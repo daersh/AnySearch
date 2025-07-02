@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserInfo> getUserList(Integer pageNo, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
-        Page<UserInfo> userPage = userDao.findAll(pageRequest);
+        Slice<UserInfo> userPage = userDao.findAll(pageRequest);
         return userPage.getContent();
     }
 
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
         System.out.println("req = " + req);
         if (passwordEncoder.matches(req.getPassword(), userinfo.getPassword())) {
             // 쿠키에 jwt 추가
-            String token = URLEncoder.encode(jwtUtil.createJwt(userinfo,"access"));
+            String token = jwtUtil.createJwt(userinfo,"access");
             Cookie cookie = new Cookie("token",token);
             response.addCookie(cookie);
             log.info("new user login success: {}",userinfo);

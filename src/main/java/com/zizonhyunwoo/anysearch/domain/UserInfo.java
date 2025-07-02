@@ -1,6 +1,5 @@
 package com.zizonhyunwoo.anysearch.domain;
 
-import com.zizonhyunwoo.anysearch.util.PasswordEncoder;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

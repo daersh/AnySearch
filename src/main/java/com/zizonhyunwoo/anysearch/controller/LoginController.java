@@ -7,7 +7,7 @@ import com.zizonhyunwoo.anysearch.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,4 +27,9 @@ public class LoginController {
     public String login(@Valid @RequestBody LoginRequest userInfo, HttpServletResponse response) {
         return userService.login(userInfo,response);
     }
+    @PostMapping("/register")
+    public ResponseEntity<UserInfo> addUser(@RequestBody UserInfo user) {
+        return ResponseEntity.ok(userService.saveUser(user));
+    }
+
 }
