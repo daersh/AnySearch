@@ -29,7 +29,7 @@ public class JwtFilterTest {
     public void jwt_필터_통과(){
 
         assertNotNull(token);
-        Claims claims = jwtUtil.parseJwt(token.substring(7));
+        Claims claims = jwtUtil.parseJwt(token);
 
         assertFalse(claims.getExpiration().before(new Date(System.currentTimeMillis())));
         assertEquals("access", claims.get("type", String.class));
