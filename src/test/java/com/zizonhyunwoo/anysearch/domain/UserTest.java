@@ -47,7 +47,7 @@ public class UserTest {
         String password="user Password 1";
         String email="user Email 1";
         String nickname="user Nickname 1";
-        User user= new User(name,password,email,nickname);
+        User user= new User(name,PasswordEncoder.encode(password),email,nickname);
 
         assertEquals(name,user.name);
         assertEquals(email,user.email);
