@@ -1,8 +1,10 @@
-version: '3.8'
-
 services:
   elasticsearch:
-    image: elasticsearch:8.13.0
+#    image: elasticsearch:8.13.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: custom-elasticsearch:8.13.0
     container_name: elasticsearch_instance
     environment:
       - discovery.type=single-node
@@ -12,11 +14,25 @@ services:
       - "9200:9200"
       - "9300:9300"
     volumes:
+      - ./userdict/userdict_ko.txt.txt:/usr/share/elasticsearch/config/userdict_ko.txt
       - esdata:/usr/share/elasticsearch/data
+      # - ./userdict:/usr/share/elasticsearch/config/userdict
+
     networks:
       - spring-boot-network
 
-  # PostgreSQL 서비스
+  kibana:
+    image: kibana:8.13.0
+    container_name: kibana_instance
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - spring-boot-network
+
   db:
     image: postgres:16-alpine
     container_name: postgres_db
