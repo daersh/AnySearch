@@ -1,0 +1,97 @@
+{
+  // 필드 매핑 (데이터 필드)
+  "mappings":{
+    "properties": {
+      "longfield":      { "type": "long", "index": false },
+      "textfield":      { "type": "text", "analyzer": "my_custom_analyzer" },
+      "datefield":      { "type": "date", "index": false },
+      "keywordfield":   { "type": "keyword", "index": false },
+      "booleanfield":   { "type": "boolean" },
+      "floatfield":     { "type": "float" },
+      "location":       { "type": "geo_point" },
+      "suggestfield":   { "type": "completion" },
+      "tags": {
+        "type": "nested",
+        "properties": {
+          "name":  { "type": "keyword" },
+          "value": { "type": "text" }
+        }
+      },
+      "ip_address":     { "type": "ip" },
+      "autocompletefield": {"type":"text","analyzer":"my_autocomplete_analyzer"}
+    }
+  },
+  // 색인 설정
+  "settings": {
+    "index": {
+      "number_of_shards": 3,
+      "number_of_replicas": 1,
+      "analysis": {
+        "analyzer": {
+          "my_custom_analyzer": {
+            "type": "custom",
+            "char_filter": ["html_strip_char_filter"],
+            "tokenizer": "korean_tokenizer",
+            "filter": [
+              "lowercase",
+              "stop",
+              "snowball"
+            ]
+          },
+          "my_autocomplete_analyzer":{
+            "type": "custom",
+            "char_filter":["html_strip_char_filter"],
+            "tokenizer": "korean_tokenizer",
+            "filter":["lowercase","my_edge_ngram_f","my_ngram_f"]
+          },
+          "korean_tokenizer_advanced_analyzer":{
+            "type": "custom",
+            "char_filter":["html_strip_char_filter"],
+            "tokenizer": "korean_tokenizer_advanced",
+            "filter":["lowercase"]
+          }
+        },
+
+        "char_filter": {
+          "html_strip_char_filter": {
+            "type": "html_strip"
+          }
+        },
+        "tokenizer":{
+          "korean_tokenizer":{"type":"nori_tokenizer"},
+          "standard_tokenizer":{"type":"standard"},
+          // decompound_mode: mixed     -> 함성어 분해 후 원본단어도 유지 (서울역 -> 서울, 역, 서울역)
+          // discard_punctuation: true  -> 구두점 제거 (하이! -> 하이)
+          // lenient: true              -> 형테소 분석 과정에서 오류 시 skip 시키는 설정
+          // user_dictionary: ".....txt"-> 사용자사전 추가
+          "korean_tokenizer_advanced":{
+            "type":"nori_tokenizer",
+            "decompound_mode":"mixed",
+            "discard_punctuation":"true",
+            "lenient":true,
+            "user_dictionary":"userdict_ko.txt"
+          }
+        },
+        "filter":{
+          // korea -> ko kor or ore re rea
+          "my_ngram_f": {
+            "type": "ngram",
+            "min_gram": 2,
+            "max_gram": 3
+          },
+          // korea -> ko kor kore
+          "my_edge_ngram_f": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 4
+          },
+          "my_shingle_f": {
+            "type": "shingle",
+            "min_shingle_size": 3,
+            "max_shingle_size": 4
+          }
+        }
+      }
+    }
+  }
+}

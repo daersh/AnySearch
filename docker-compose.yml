@@ -14,7 +14,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - ./userdict/userdict_ko.txt.txt:/usr/share/elasticsearch/config/userdict_ko.txt
+      - ./userdict/userdict_ko.txt:/usr/share/elasticsearch/config/userdict_ko.txt
       - esdata:/usr/share/elasticsearch/data
       # - ./userdict:/usr/share/elasticsearch/config/userdict
 
