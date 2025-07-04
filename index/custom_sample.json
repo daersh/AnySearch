@@ -1,0 +1,64 @@
+{
+  "mappings": {
+    "properties": {
+      "textfield": {
+        "type": "text",
+        "analyzer": "korean_tokenizer_advanced_analyzer"
+      },
+      "keywordfield": {
+        "type": "keyword",
+        "index": false
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "number_of_shards": 3,
+      "number_of_replicas": 1,
+      "analysis": {
+        "analyzer": {
+          "korean_tokenizer_advanced_analyzer": {
+            "type": "custom",
+            "char_filter": [
+              "html_strip_char_filter"
+            ],
+            "tokenizer": "korean_tokenizer_advanced",
+            "filter": [
+              "lowercase",
+              "synonym_filter",
+              "stop_pos_filter_test"
+            ]
+          }
+        },
+        "char_filter": {
+          "html_strip_char_filter": {
+            "type": "html_strip"
+          }
+        },
+        "tokenizer": {
+          "standard_tokenizer": {
+            "type": "standard"
+          },
+          "korean_tokenizer_advanced": {
+            "type": "nori_tokenizer",
+            "decompound_mode": "mixed",
+            "discard_punctuation": "true",
+            "lenient": true,
+            "user_dictionary": "dictionary/userdict_ko.txt"
+          }
+        },
+        "filter": {
+          "synonym_filter": {
+             "type": "synonym",
+             "synonyms_path":"dictionary/synonym_set.txt",
+             "lenient": true
+          },
+          "stop_pos_filter_test":{
+            "type": "stop_pos_filter",
+            "stop_tags": ["J"]
+          }
+        }
+      }
+    }
+  }
+}

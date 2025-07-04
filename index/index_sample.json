@@ -3,14 +3,14 @@
   "mappings":{
     "properties": {
       "longfield":      { "type": "long", "index": false },
-      "textfield":      { "type": "text", "analyzer": "my_custom_analyzer" },
+      "textfield":      { "type": "text", "analyzer": "korean_tokenizer_advanced_analyzer" },
       "datefield":      { "type": "date", "index": false },
       "keywordfield":   { "type": "keyword", "index": false },
       "booleanfield":   { "type": "boolean" },
       "floatfield":     { "type": "float" },
       "location":       { "type": "geo_point" },
       "suggestfield":   { "type": "completion" },
-      "tags": {
+      "tags": { // 서브쿼리
         "type": "nested",
         "properties": {
           "name":  { "type": "keyword" },
@@ -48,7 +48,7 @@
             "type": "custom",
             "char_filter":["html_strip_char_filter"],
             "tokenizer": "korean_tokenizer_advanced",
-            "filter":["lowercase","synonym_filter"]
+            "filter":["lowercase","synonym_filter","nori_post_filter"]
           }
         },
 
@@ -69,7 +69,7 @@
             "decompound_mode":"mixed",
             "discard_punctuation":"true",
             "lenient":true,
-            "user_dictionary":"dictionary/userdict_ko.txt",
+            "user_dictionary":"dictionary/userdict_ko.txt"
           }
         },
         "filter":{
@@ -91,10 +91,11 @@
             "max_shingle_size": 4
           },
           "synonym_filter": {
-             "type": "synonym",
-             "synonyms_path":"dictionary/synonym_set.txt",
-             "lenient": true
-          }
+            "type": "synonym",
+            "synonyms_path":"dictionary/synonym_set.txt",
+            "lenient": true
+          },
+          "nori_post_filter":{"type": "nori_part_of_speech", "soptags": ["J"]}
         }
       }
     }
