@@ -1,7 +1,10 @@
 # Dockerfile
-FROM elasticsearch:8.13.0
+FROM elasticsearch:8.17.6
 
 RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-nori
+
+COPY zizon-analyzer-1.0-SNAPSHOT.zip /tmp/zizon-analyzer.zip
+RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install file:///tmp/zizon-analyzer.zip
 
 # 사용자 사전 파일 복사
 # user_dic.txt 파일은 Dockerfile이 있는 디렉토리 또는 그 하위 userdict 폴더에 있어야 합니다.
