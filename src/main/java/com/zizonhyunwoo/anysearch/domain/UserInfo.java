@@ -36,6 +36,7 @@ public class UserInfo {
         this.password = password;
         this.email = email;
         this.nickname = nickname;
+        this.role = "ROLE_USER";
     }
 
     public UserInfo(String userName, String password, String userEmail, String userNickname, String userRole) {

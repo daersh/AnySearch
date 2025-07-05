@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GeneratorType;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -48,4 +45,7 @@ public class AnyData {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @JoinColumn(name = "user_id", nullable = false,updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserInfo userId;
 }
