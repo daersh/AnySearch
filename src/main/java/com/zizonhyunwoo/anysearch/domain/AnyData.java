@@ -1,5 +1,6 @@
 package com.zizonhyunwoo.anysearch.domain;
 
+import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,5 +48,17 @@ public class AnyData {
 
     @JoinColumn(name = "user_id", nullable = false,updatable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private UserInfo userId;
+    private UserInfo userInfo;
+
+    public AnyData(UserInfo userInfo, AnyDataInsertRequest anyData) {
+        this.type = anyData.type();
+        this.title = anyData.title();
+        this.description = anyData.description();
+        this.addInfo = anyData.addInfo();
+        this.addDetail = anyData.addDetail();
+        this.isActive = anyData.isActive();
+        this.createdAt = this.createdAt!=null?this.createdAt:LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        this.userInfo = userInfo;
+    }
 }
