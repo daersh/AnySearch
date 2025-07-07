@@ -35,9 +35,14 @@ public class AnyDataController {
     }
 
     @GetMapping
-    public AnyDataResponse findAll(@AuthenticationPrincipal UserInfo userInfo, @RequestParam String id) {
+    public AnyDataResponse findById(@AuthenticationPrincipal UserInfo userInfo, @RequestParam String id) {
         log.info("userInfo={}", userInfo);
         return anyDataService.read(id);
+    }
+
+    @GetMapping("/list")
+    public List<AnyDataResponse> list(@AuthenticationPrincipal UserInfo userInfo, @RequestParam int page, @RequestParam int size) {
+        return anyDataService.findAll(page,size);
     }
 
     @PutMapping

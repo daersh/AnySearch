@@ -9,14 +9,12 @@ import com.zizonhyunwoo.anysearch.response.UserInfoResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +35,12 @@ public class AnyDataServiceImpl implements AnyDataService {
         return anyDataRepository.findById(UUID.fromString(id)).stream()
                 .map(AnyDataServiceImpl::getAnyDataResponse)
                 .toList().get(0);
+    }
+
+    @Override
+    public List<AnyDataResponse> findAll(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return anyDataRepository.findAll(pageRequest).stream().map(AnyDataServiceImpl::getAnyDataResponse).toList();
     }
 
     private static AnyDataResponse getAnyDataResponse(AnyData data) {

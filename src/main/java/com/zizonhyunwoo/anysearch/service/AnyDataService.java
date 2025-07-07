@@ -13,6 +13,8 @@ public interface AnyDataService {
 
     AnyDataResponse read(String id);
 
+    List<AnyDataResponse> findAll(int page, int size);
+
     AnyDataResponse update(UserInfo userInfo, AnyDataInsertRequest anyData);
 
     void delete(UserInfo userInfo, UUID id);
