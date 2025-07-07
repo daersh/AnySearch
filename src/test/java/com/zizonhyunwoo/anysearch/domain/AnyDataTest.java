@@ -49,7 +49,7 @@ public class AnyDataTest {
     }
 
     @Test
-    @DisplayName("데이터 삽입 테스트") // Changed DisplayName for clarity
+    @DisplayName("데이터 삽입 테스트")
     public void 데이터_삽입_테스트() {
         insertData= new AnyData(
                 null,
