@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
             System.out.println("token check finished");
         }catch (Exception e) {
             PrintWriter printWriter = response.getWriter();
-            printWriter.print("token error");
+            printWriter.print(e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
@@ -71,7 +71,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private void checkToken(String token) throws ServletException {
         if (jwtUtil.isExpired(token) || !jwtUtil.parseJwt(token,"type").equals("access")) {
-            System.out.println("token is expired");
             throw new ServletException("access token error");
         }
     }

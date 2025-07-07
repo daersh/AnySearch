@@ -3,6 +3,7 @@ package com.zizonhyunwoo.anysearch.controller;
 import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
+import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,23 +24,24 @@ public class AnyDataController {
     private final AnyDataService anyDataService;
 
     @PostMapping
-    public AnyData insert(@AuthenticationPrincipal UserInfo userInfo, @RequestBody@Validated AnyDataInsertRequest anyData) {
+    public AnyDataResponse insert(@AuthenticationPrincipal UserInfo userInfo, @RequestBody@Validated AnyDataInsertRequest anyData) {
         return anyDataService.insert(userInfo, anyData);
     }
 
     @PostMapping("/list")
-    public List<AnyData> list(@AuthenticationPrincipal UserInfo userInfo, @RequestBody List<AnyDataInsertRequest> anyDataList) {
+    public List<AnyDataResponse> list(@AuthenticationPrincipal UserInfo userInfo, @RequestBody List<AnyDataInsertRequest> anyDataList) {
         log.info("userInfo={}", userInfo);
         return anyDataService.insertAll(userInfo,anyDataList);
     }
 
     @GetMapping
-    public AnyData findAll(@AuthenticationPrincipal UserInfo userInfo, @RequestParam UUID id) {
+    public AnyDataResponse findAll(@AuthenticationPrincipal UserInfo userInfo, @RequestParam String id) {
+        log.info("userInfo={}", userInfo);
         return anyDataService.read(id);
     }
 
     @PutMapping
-    public AnyData update(@AuthenticationPrincipal UserInfo userInfo, @RequestBody AnyDataInsertRequest anyData) {
+    public AnyDataResponse update(@AuthenticationPrincipal UserInfo userInfo, @RequestBody AnyDataInsertRequest anyData) {
         return anyDataService.update(userInfo,anyData);
     }
 
