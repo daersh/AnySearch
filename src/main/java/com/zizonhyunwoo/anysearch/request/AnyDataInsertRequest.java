@@ -13,6 +13,7 @@ public record AnyDataInsertRequest (
         String addInfo,
         @NotEmpty
         String addDetail,
+        @NotEmpty
         Boolean isActive
 )
 {

@@ -22,9 +22,9 @@ public class UserInfo {
     UUID id;
     @Column(name = "name",nullable = false)
     String name;
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     String password;
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", unique = true)
     String email;
     @Column(name = "nickname", nullable = false, unique = true)
     String nickname;

@@ -9,5 +9,6 @@ import java.util.UUID;
 @Repository
 public interface AnyDataRepository extends JpaRepository<AnyData, UUID> {
     void deleteByIdAndUserInfo_Id(UUID id, UUID id1);
+
 }
 
