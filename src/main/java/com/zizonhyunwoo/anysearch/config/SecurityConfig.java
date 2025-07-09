@@ -23,7 +23,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
-    private final List<String> url = List.of("*");
+    private final List<String> url = List.of("localhost:3000","localhost:5173","http://localhost:3000");
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)throws Exception{
         return configuration.getAuthenticationManager();
