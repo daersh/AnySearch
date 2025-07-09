@@ -1,6 +1,5 @@
 package com.zizonhyunwoo.anysearch.service;
 
-import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;

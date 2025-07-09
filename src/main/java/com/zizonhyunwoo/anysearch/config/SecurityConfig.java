@@ -57,12 +57,12 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/login/register").permitAll()
-                        .requestMatchers("/user/**").authenticated()
-                        .requestMatchers("/any_data/**").authenticated()
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/batch").permitAll()
+                        .requestMatchers("/api/login").permitAll()
+                        .requestMatchers("/api/login/register").permitAll()
+                        .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/any_data/**").authenticated()
+                        .requestMatchers("/api/swagger-ui/**").permitAll()
+                        .requestMatchers("/api/batch").permitAll()
                         .anyRequest().permitAll()
                 );
 

@@ -44,6 +44,6 @@ public class UserInfo {
         this.password = password;
         this.email = userEmail;
         this.nickname = userNickname;
-        this.role = userRole;
+        this.role = userRole==null?"ROLE_USER":userRole;
     }
 }

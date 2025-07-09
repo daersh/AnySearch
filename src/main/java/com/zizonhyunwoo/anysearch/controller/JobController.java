@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/batch")
+@RequestMapping("/api/batch")
 public class JobController {
 
     private final JobLauncher jobLauncher;

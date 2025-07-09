@@ -53,6 +53,7 @@ public class AnyData {
     private UserInfo userInfo;
 
     public AnyData(UserInfo userInfo, AnyDataInsertRequest anyData) {
+        this.id = anyData.id()==null||anyData.id().isBlank()?null:UUID.fromString(anyData.id());
         this.type = anyData.type();
         this.title = anyData.title();
         this.description = anyData.description();

@@ -10,6 +10,7 @@ import com.zizonhyunwoo.anysearch.service.AnyDataService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,12 +40,13 @@ public class AnyDataServiceImpl implements AnyDataService {
 
     @Override
     public List<AnyDataResponse> findAll(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
         return anyDataRepository.findAll(pageRequest).stream().map(AnyDataServiceImpl::getAnyDataResponse).toList();
     }
 
     private static AnyDataResponse getAnyDataResponse(AnyData data) {
         return new AnyDataResponse(
+                data.getId().toString(),
                 data.getType(), data.getTitle(), data.getDescription(), data.getAddInfo(),
                 data.getAddDetail(), data.getCreatedAt(), data.getUpdatedAt(), data.getIsActive(),
                 new UserInfoResponse(data.getUserInfo().getName(), data.getUserInfo().getEmail(), data.getUserInfo().getNickname()
@@ -54,6 +56,7 @@ public class AnyDataServiceImpl implements AnyDataService {
     @Override
     @Transactional
     public AnyDataResponse update(UserInfo userInfo, AnyDataInsertRequest anyData) {
+        System.out.println("anyData = " + anyData);
         return getAnyDataResponse(anyDataRepository.save(new AnyData(userInfo,anyData)));
     }
 

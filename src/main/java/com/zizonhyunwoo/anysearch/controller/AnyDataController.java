@@ -1,13 +1,11 @@
 package com.zizonhyunwoo.anysearch.controller;
 
-import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +15,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/any_data")
+@RequestMapping("/api/any_data")
 @RequiredArgsConstructor
 public class AnyDataController {
 
@@ -47,6 +45,7 @@ public class AnyDataController {
 
     @PutMapping
     public AnyDataResponse update(@AuthenticationPrincipal UserInfo userInfo, @RequestBody AnyDataInsertRequest anyData) {
+        log.info("AnyData={}", anyData);
         return anyDataService.update(userInfo,anyData);
     }
 

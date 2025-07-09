@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/search")
+@RequestMapping("/api/search")
 public class SearchController {
 
     private final ProductRepository productRepository;
@@ -90,5 +90,11 @@ public class SearchController {
         List<IndexSample> content = hits.stream().map(SearchHit::getContent).toList();
 
         return content;
+    }
+
+    @GetMapping("/any_data")
+    public Iterable<IndexSample> getAnalzerIndexSample(){
+
+        return null;
     }
 }

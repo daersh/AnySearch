@@ -5,6 +5,7 @@ import com.zizonhyunwoo.anysearch.domain.AnyData;
 import java.time.LocalDateTime;
 
 public record AnyDataResponse (
+        String id,
         String type,
         String title,
         String description,

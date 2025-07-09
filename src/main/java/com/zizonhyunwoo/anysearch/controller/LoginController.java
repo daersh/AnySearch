@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api/login")
 @RequiredArgsConstructor
 public class LoginController {
     private final JwtUtil jwtUtil;
@@ -24,8 +24,8 @@ public class LoginController {
                 "access");
     }
     @PostMapping
-    public String login(@Valid @RequestBody LoginRequest userInfo, HttpServletResponse response) {
-        return userService.login(userInfo,response);
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest userInfo, HttpServletResponse response) {
+        return ResponseEntity.ok(userService.login(userInfo,response));
     }
     @PostMapping("/register")
     public ResponseEntity<UserInfo> addUser(@RequestBody UserInfo user) {

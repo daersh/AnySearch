@@ -3,6 +3,8 @@ package com.zizonhyunwoo.anysearch.request;
 import jakarta.validation.constraints.NotEmpty;
 
 public record AnyDataInsertRequest (
+
+        String id,
         @NotEmpty
         String type,
         @NotEmpty
@@ -13,7 +15,6 @@ public record AnyDataInsertRequest (
         String addInfo,
         @NotEmpty
         String addDetail,
-        @NotEmpty
         Boolean isActive
 )
 {
