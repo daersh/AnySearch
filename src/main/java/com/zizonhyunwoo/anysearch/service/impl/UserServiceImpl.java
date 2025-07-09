@@ -80,13 +80,9 @@ public class UserServiceImpl implements UserService {
         System.out.println("userinfo = " + userinfo);
         System.out.println("req = " + req);
         if (passwordEncoder.matches(req.getPassword(), userinfo.getPassword())) {
-            // 쿠키에 jwt 추가
             String token = jwtUtil.createJwt(userinfo,"access");
-            Cookie cookie = new Cookie("token",token);
-            response.addCookie(cookie);
             log.info("new user login success: {}",userinfo);
-            // 회원정보 반환
-            return "login success";
+            return token;
         }
 
         response.setStatus(400);
