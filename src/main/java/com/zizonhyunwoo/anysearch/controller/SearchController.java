@@ -2,6 +2,7 @@ package com.zizonhyunwoo.anysearch.controller;
 
 import com.zizonhyunwoo.anysearch.elastic.dao.IndexSampleRepository;
 import com.zizonhyunwoo.anysearch.elastic.dao.ProductRepository;
+import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDoc;
 import com.zizonhyunwoo.anysearch.elastic.index.IndexSample;
 import com.zizonhyunwoo.anysearch.elastic.index.Product;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.elasticsearch.core.query.StringQuery;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,18 +67,20 @@ public class SearchController {
         }
     }
 
-    @GetMapping("/anlyzer2")
-    public Iterable<IndexSample> getAnalzerIndexSample2(
+    @GetMapping("/analyzer2")
+    public Iterable<AnyDataDoc> getAnalzerIndexSample2(
             @RequestParam String request,
             @RequestParam Integer page,
-            @RequestParam Integer size) {
+            @RequestParam Integer size,
+            @RequestParam String type
+    ) {
 
         String jsonQuery = """
             {
               "match": {
-                "textfield": {
-                  "query": "%s",
-                  "analyzer": "my_custom_analyzer"
+                "title": {
+                  "query": "%s"
+//                  ,"analyzer": "my_custom_analyzer"
                 }
               }
             }
@@ -84,12 +88,16 @@ public class SearchController {
 
         Query query = new StringQuery(jsonQuery);
         query.setPageable(PageRequest.of(page,size));
+        try {
+            SearchHits<AnyDataDoc> hits = elasticsearchOperations.search(query, AnyDataDoc.class, IndexCoordinates.of("anydata_"+type));
+            List<AnyDataDoc> content = hits.stream().map(SearchHit::getContent).toList();
 
-        SearchHits<IndexSample> hits = elasticsearchOperations.search(query, IndexSample.class);
+            return content;
 
-        List<IndexSample> content = hits.stream().map(SearchHit::getContent).toList();
-
-        return content;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @GetMapping("/any_data")

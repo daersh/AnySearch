@@ -54,4 +54,10 @@ public class AnyDataController {
         anyDataService.delete(userInfo, id);
     }
 
+
+    // 데이터 종류 반환
+    @GetMapping("/type")
+    public List<String> getDataType(){
+        return anyDataService.getDataType();
+    }
 }

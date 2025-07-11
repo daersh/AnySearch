@@ -19,4 +19,7 @@ public interface AnyDataService {
     void delete(UserInfo userInfo, UUID id);
 
     List<AnyDataResponse> insertAll(UserInfo userInfo, List<AnyDataInsertRequest> anyDataList);
+
+    List<String> getDataType();
+
 }
