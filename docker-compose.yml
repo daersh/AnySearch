@@ -4,19 +4,19 @@ version: '3.8'
 services:
   spring-boot-app:
     build:
-      context: . # 현재 디렉토리에서 Dockerfile을 찾음 (스프링 부트용)
-      dockerfile: Dockerfile # 스프링 부트 전용 Dockerfile (아래에서 수정 제안)
+      context: .
+      dockerfile: Dockerfile
       args:
-        JAR_FILE: build/libs/AnySearch-0.0.1-SNAPSHOT.jar # JAR 파일 경로 전달
+        JAR_FILE: build/libs/AnySearch-0.0.1-SNAPSHOT.jar
     container_name: spring-boot-app
     ports:
-      - "8080:8080" # 스프링 부트 포트
+      - "8080:8080"
     environment:
-      - SPRING_DATA_ELASTICSEARCH_CLIENT_REACTIVE_URL=http://elasticsearch:9200
+      - spring_elasticsearch_uris=http://elasticsearch:9200
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ady_db
       - SPRING_DATASOURCE_USERNAME=any
       - SPRING_DATASOURCE_PASSWORD=any
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update # 개발 환경에서 DDL 자동 생성/업데이트
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - elasticsearch
       - db

@@ -1,0 +1,13 @@
+# Dockerfile
+FROM elasticsearch:8.17.6
+
+RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-nori
+
+COPY zizon-analyzer-1.0-SNAPSHOT.zip /tmp/zizon-analyzer.zip
+RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install file:///tmp/zizon-analyzer.zip
+
+# 사용자 사전 파일 복사
+
+#COPY userdict/user_dic.txt /usr/share/elasticsearch/config/userdict_ko.txt
+
+# COPY elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
