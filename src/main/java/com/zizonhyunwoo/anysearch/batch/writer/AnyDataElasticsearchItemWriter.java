@@ -27,12 +27,19 @@ public class AnyDataElasticsearchItemWriter implements ItemWriter<AnyDataDocumen
 
             IndexCoordinates indexCoordinates = IndexCoordinates.of(indexName);
             IndexOperations indexOperations = elasticsearchTemplate.indexOps(indexCoordinates);
-            if (!indexOperations.exists()){
+            if (!indexOperations.exists())
                 indexOperations.create();
-                log.info("Index {} created", indexName);
-            }
+
+
             elasticsearchTemplate.save(anyData, indexCoordinates);
-            log.info("Index {} saved", indexName);
+
+            IndexCoordinates indexCoordinates2 = IndexCoordinates.of("anydata");
+            IndexOperations indexOperations2 = elasticsearchTemplate.indexOps(indexCoordinates2);
+            if (!indexOperations2.exists())
+                indexOperations2.create();
+
+            elasticsearchTemplate.save(anyData, indexCoordinates);
+
         }
     }
 }
