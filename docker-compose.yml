@@ -10,7 +10,7 @@ services:
         JAR_FILE: build/libs/AnySearch-0.0.1-SNAPSHOT.jar
     container_name: spring-boot-app
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       - spring_elasticsearch_uris=http://elasticsearch:9200
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ady_db
