@@ -15,5 +15,7 @@ public interface AnyDataRepository extends JpaRepository<AnyData, UUID> {
 
     @Query( "SELECT a.type FROM AnyData a GROUP BY a.type")
     List<String> findType();
+
+    boolean existsByType(String type);
 }
 

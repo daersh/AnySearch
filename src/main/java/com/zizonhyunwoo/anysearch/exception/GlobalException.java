@@ -42,6 +42,7 @@ public class GlobalException {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> generalException(Exception e){
         log.info(e.getMessage());
+        e.printStackTrace();
         return ResponseEntity.badRequest().build();
     }
 

@@ -3,6 +3,7 @@ package com.zizonhyunwoo.anysearch.service.impl;
 import com.zizonhyunwoo.anysearch.dao.AnyDataRepository;
 import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
+import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
 import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.response.UserInfoResponse;
@@ -11,23 +12,50 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.IndexOperations;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class AnyDataServiceImpl implements AnyDataService {
 
     private final AnyDataRepository anyDataRepository;
+    private final ElasticsearchTemplate elasticsearchTemplate;
 
     @Override
     @Transactional
     public AnyDataResponse insert(UserInfo userInfo, AnyDataInsertRequest anyData) {
 
-        return getAnyDataResponse(anyDataRepository.save(new AnyData(userInfo,anyData)));
+        boolean flag = anyDataRepository.existsByType(anyData.type());
+        AnyData res= anyDataRepository.save(new AnyData(userInfo,anyData));
+
+        System.out.println("flag = " + flag);
+        if (flag) {// 새로운 타입이 아니라멵 추가잉~
+
+            String dynamicIndexName = "anydata_" + res.getType().toLowerCase(Locale.KOREA);
+            IndexCoordinates dynamicIndexCoordinates = IndexCoordinates.of(dynamicIndexName);
+
+            Map<String,String> addFieldList = parseData(res.getAddInfo(),res.getAddDetail());
+            AnyDataDocument doc = AnyDataDocument.builder()
+                    .id(res.getId().toString())
+                    .type(res.getType())
+                    .title(res.getTitle())
+                    .description(res.getDescription())
+                    .additionalFields(addFieldList)
+                    .createdAt(res.getCreatedAt())
+                    .updatedAt(res.getUpdatedAt())
+                    .isActive(res.getIsActive())
+                    .userId(res.getUserInfo().getEmail())
+                    .build();
+            System.out.println("doc = " + doc);
+            elasticsearchTemplate.save(doc,dynamicIndexCoordinates);
+        }
+
+        return getAnyDataResponse(res);
     }
 
     @Override
@@ -83,4 +111,22 @@ public class AnyDataServiceImpl implements AnyDataService {
         return anyDataRepository.findType();
     }
 
+
+    private Map<String, String> parseData(String addInfo, String addDetail) {
+
+        String delimiter = "†";
+
+        int count = addInfo.split(delimiter).length;
+        List<String> keys = Arrays.asList(addInfo.split(delimiter));
+        List<String> values = Arrays.asList(addDetail.split(delimiter));
+        Map<String, String> data = new HashMap<>();
+        for (int i = 0; i < count; i++) {
+            try {
+                data.put(keys.get(i), values.get(i));
+            }catch (Exception e){
+                break;
+            }
+        }
+        return data;
+    }
 }
