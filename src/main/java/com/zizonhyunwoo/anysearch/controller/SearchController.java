@@ -88,7 +88,7 @@ public class SearchController {
         Query query = new StringQuery(jsonQuery);
         query.setPageable(PageRequest.of(page,size));
         try {
-            SearchHits<AnyDataDoc> hits = elasticsearchOperations.search(query, AnyDataDoc.class, IndexCoordinates.of("anydata_"+type));
+            SearchHits<AnyDataDoc> hits = elasticsearchOperations.search(query, AnyDataDoc.class, IndexCoordinates.of(type));
 
             Long totalHits = hits.getTotalHits();
             List<AnyDataDoc> content = hits.stream().map(SearchHit::getContent).toList();

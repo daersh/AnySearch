@@ -8,13 +8,11 @@ import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.response.UserInfoResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
+import com.zizonhyunwoo.anysearch.util.ElasticsearchUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.IndexOperations;
-import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,7 +22,7 @@ import java.util.*;
 public class AnyDataServiceImpl implements AnyDataService {
 
     private final AnyDataRepository anyDataRepository;
-    private final ElasticsearchTemplate elasticsearchTemplate;
+    private final ElasticsearchUtil elasticsearchUtil;
 
     @Override
     @Transactional
@@ -33,11 +31,7 @@ public class AnyDataServiceImpl implements AnyDataService {
         boolean flag = anyDataRepository.existsByType(anyData.type());
         AnyData res= anyDataRepository.save(new AnyData(userInfo,anyData));
 
-        System.out.println("flag = " + flag);
-        if (flag) {// 새로운 타입이 아니라멵 추가잉~
-
-            String dynamicIndexName = "anydata_" + res.getType().toLowerCase(Locale.KOREA);
-            IndexCoordinates dynamicIndexCoordinates = IndexCoordinates.of(dynamicIndexName);
+        if (flag) {// 새로운 타입이 아니라면 추가
 
             Map<String,String> addFieldList = parseData(res.getAddInfo(),res.getAddDetail());
             AnyDataDocument doc = AnyDataDocument.builder()
@@ -51,8 +45,7 @@ public class AnyDataServiceImpl implements AnyDataService {
                     .isActive(res.getIsActive())
                     .userId(res.getUserInfo().getEmail())
                     .build();
-            System.out.println("doc = " + doc);
-            elasticsearchTemplate.save(doc,dynamicIndexCoordinates);
+            elasticsearchUtil.saveData(res.getType(), doc);
         }
 
         return getAnyDataResponse(res);
