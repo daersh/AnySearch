@@ -68,7 +68,7 @@ public class SearchController {
     }
 
     @GetMapping("/analyzer2")
-    public Iterable<AnyDataDoc> getAnalzerIndexSample2(
+    public SearchResponse getAnalzerIndexSample2(
             @RequestParam String request,
             @RequestParam Integer page,
             @RequestParam Integer size,
@@ -80,7 +80,7 @@ public class SearchController {
               "match": {
                 "title": {
                   "query": "%s"
-//                  ,"analyzer": "my_custom_analyzer"
+                  ,"analyzer": "korean_tokenizer_advanced_analyzer"
                 }
               }
             }
@@ -90,9 +90,11 @@ public class SearchController {
         query.setPageable(PageRequest.of(page,size));
         try {
             SearchHits<AnyDataDoc> hits = elasticsearchOperations.search(query, AnyDataDoc.class, IndexCoordinates.of("anydata_"+type));
+
+            Long totalHits = hits.getTotalHits();
             List<AnyDataDoc> content = hits.stream().map(SearchHit::getContent).toList();
 
-            return content;
+            return new SearchResponse(totalHits,content);
 
         }catch (Exception e){
             e.printStackTrace();

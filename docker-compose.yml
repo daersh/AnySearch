@@ -24,7 +24,6 @@ services:
       - spring-boot-network # 네트워크 통일
 
   elasticsearch:
-    # Elasticsearch 전용 Dockerfile을 빌드하여 플러그인 설치
     build:
       context: .
       dockerfile: Dockerfile.elasticsearch # Elasticsearch 전용 Dockerfile 사용
@@ -38,12 +37,11 @@ services:
       - "9200:9200"
       - "9300:9300"
     volumes:
+      # 사용자 사전 및 동의어 사전 파일을 호스트의 ./searchDictionary/에서 컨테이너의 config/dictionary/로 마운트
+      - ./searchDictionary/:/usr/share/elasticsearch/config/dictionary/
       - esdata:/usr/share/elasticsearch/data # 데이터 영속성을 위해 볼륨 사용
-      # Dockerfile.elasticsearch에서 사용자 사전을 복사하므로 여기서 볼륨 마운트는 필요 없을 수 있습니다.
-      # 만약 런타임에 외부에서 파일을 변경하고 싶다면 마운트 유지.
-      # - ./searchDictionary/:/usr/share/elasticsearch/config/dictionary/
     networks:
-      - spring-boot-network # 네트워크 통일
+      - spring-boot-network
 
   kibana:
     image: kibana:8.17.6 # Elasticsearch와 버전 일치

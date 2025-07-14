@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Dynamic;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -18,15 +15,16 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @Document(indexName = "anydata")
+@Setting(settingPath = "/elastic/anydataSettings.json")
 public class AnyDataDocument {
 
     @Id
     private String id;
     @Field(type = FieldType.Keyword)
     private String type;
-    @Field(type = FieldType.Text, analyzer = "my_custom_analyzer")
+    @Field(type = FieldType.Text, analyzer = "korean_tokenizer_advanced_analyzer")
     private String title;
-    @Field(type = FieldType.Text, analyzer = "my_custom_analyzer")
+    @Field(type = FieldType.Text, analyzer = "korean_tokenizer_advanced_analyzer")
     private String description;
     @Field(type = FieldType.Object, dynamic = Dynamic.TRUE)
     private Map<String, String> additionalFields;

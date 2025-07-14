@@ -51,34 +51,34 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-def frontDir = file("../AnySearchFront")
-tasks.register('generateFrontend', Exec) {
-    delete "${frontDir}/.output"
-
-    workingDir frontDir
-
-    def isWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
-    def genCommand = isWindows
-            ? file("${frontDir}/nuxt-generate.cmd").absolutePath
-            : file("${frontDir}/nuxt-generate.sh").absolutePath
-    commandLine genCommand
-}
-
-tasks.register('copyFrontend', Copy) {
-    dependsOn generateFrontend
-    from "${frontDir}/.output/public"
-    into "${project.buildDir}/resources/main/static"
-}
-
-clean {
-    delete "${frontDir}/.output"
-    delete "${project.buildDir}/resources/main/static"
-}
-
-processResources {
-    dependsOn copyFrontend
-}
-
-bootJar {
-    dependsOn copyFrontend
-}
+//def frontDir = file("../AnySearchFront")
+//tasks.register('generateFrontend', Exec) {
+//    delete "${frontDir}/.output"
+//
+//    workingDir frontDir
+//
+//    def isWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
+//    def genCommand = isWindows
+//            ? file("${frontDir}/nuxt-generate.cmd").absolutePath
+//            : file("${frontDir}/nuxt-generate.sh").absolutePath
+//    commandLine genCommand
+//}
+//
+//tasks.register('copyFrontend', Copy) {
+//    dependsOn generateFrontend
+//    from "${frontDir}/.output/public"
+//    into "${project.buildDir}/resources/main/static"
+//}
+//
+//clean {
+//    delete "${frontDir}/.output"
+//    delete "${project.buildDir}/resources/main/static"
+//}
+//
+//processResources {
+//    dependsOn copyFrontend
+//}
+//
+//bootJar {
+//    dependsOn copyFrontend
+//}
