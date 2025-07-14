@@ -76,15 +76,14 @@ public class SearchController {
     ) {
 
         String jsonQuery = """
-            {
-              "match": {
-                "title": {
-                  "query": "%s"
-                  ,"analyzer": "korean_tokenizer_advanced_analyzer"
-                }
-              }
-            }
-            """.formatted(request.replace("\"", "\\\""));
+    {
+      "multi_match": {
+        "query": "%s",
+        "fields": ["title", "description", "additionalFields.*"],
+        "analyzer": "korean_tokenizer_advanced_analyzer"
+      }
+    }
+    """.formatted(request.replace("\"", "\\\""));
 
         Query query = new StringQuery(jsonQuery);
         query.setPageable(PageRequest.of(page,size));
