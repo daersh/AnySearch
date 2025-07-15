@@ -52,14 +52,21 @@ public class ElasticsearchUtil {
     }
 
     public void saveData(String type, AnyDataDocument anyDataDocument)  {
-        String dynamicIndexName = type.equals("anydata")?type:"anydata_" + type.toLowerCase(Locale.KOREA);
 
-        IndexCoordinates dynamicIndexCoordinates = IndexCoordinates.of(dynamicIndexName);
+        String dynamicIndexName = type.equals("anydata")?type:"anydata_" + type.toLowerCase(Locale.KOREA);
+        IndexCoordinates indexCoordinates = getIndexCoordinates(dynamicIndexName);
+
+        elasticsearchTemplate.save(anyDataDocument, indexCoordinates);
+    }
+
+    public IndexCoordinates getIndexCoordinates(String type) {
+
+        IndexCoordinates dynamicIndexCoordinates = IndexCoordinates.of(type);
         IndexOperations dynamicIndexOperations = elasticsearchTemplate.indexOps(dynamicIndexCoordinates);
 
         if (!dynamicIndexOperations.exists()) {
             try {
-                log.info("Creating dynamic index: {}", dynamicIndexName);
+                log.info("Creating dynamic index: {}", type);
 
                 Map<String, Object> settingsMap = new HashMap<>();
                 Map<String, Object> indexSettings = new HashMap<>();
@@ -77,9 +84,14 @@ public class ElasticsearchUtil {
             }catch (Exception e){
                 log.error(e.getMessage());
             }
-
         }
+        return dynamicIndexCoordinates;
+    }
 
-        elasticsearchTemplate.save(anyDataDocument,dynamicIndexCoordinates);
+    public void saveData(String type, List<AnyDataDocument> value) {
+        String dynamicIndexName = type.equals("anydata")?type:"anydata_" + type.toLowerCase(Locale.KOREA);
+
+        IndexCoordinates indexCoordinates = getIndexCoordinates(dynamicIndexName);
+        elasticsearchTemplate.save(value, indexCoordinates);
     }
 }
