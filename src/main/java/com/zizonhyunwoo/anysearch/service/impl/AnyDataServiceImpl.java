@@ -9,12 +9,16 @@ import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.response.UserInfoResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
 import com.zizonhyunwoo.anysearch.util.ElasticsearchUtil;
+import com.zizonhyunwoo.anysearch.util.ParsingUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 @Service
@@ -23,6 +27,7 @@ public class AnyDataServiceImpl implements AnyDataService {
 
     private final AnyDataRepository anyDataRepository;
     private final ElasticsearchUtil elasticsearchUtil;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     @Transactional
@@ -33,7 +38,8 @@ public class AnyDataServiceImpl implements AnyDataService {
 
         if (flag) {// 새로운 타입이 아니라면 추가
 
-            Map<String,String> addFieldList = parseData(res.getAddInfo(),res.getAddDetail());
+            Map<String,String> addFieldList = ParsingUtil.parseData(res.getAddInfo(),res.getAddDetail());
+
             AnyDataDocument doc = AnyDataDocument.builder()
                     .id(res.getId().toString())
                     .type(res.getType())
@@ -89,12 +95,41 @@ public class AnyDataServiceImpl implements AnyDataService {
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public List<AnyDataResponse> insertAll(UserInfo userInfo, List<AnyDataInsertRequest> anyDataList) {
         List<AnyDataResponse> anyDatas = new ArrayList<>();
+        System.out.println("anyData = " + anyDataList);
+//        anyDataList.forEach(anyDataInsertRequest ->
+//                anyDatas.add(insert(userInfo,anyDataInsertRequest)));
 
-        anyDataList.forEach(anyDataInsertRequest ->
-                anyDatas.add(insert(userInfo,anyDataInsertRequest)));
+
+            jdbcTemplate.batchUpdate(
+                "INSERT INTO any_data(any_data_id, add_detail, add_info, created_at, description, is_active, title, type, updated_at, user_id)" +
+                        " VALUES(?,?,?,?,?,?,?,?,?,?)",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        AnyData res = new AnyData(userInfo, anyDataList.get(i));
+                        System.out.println("res = " + res);
+                        ps.setObject(1, UUID.randomUUID());
+                        ps.setString(2, res.getAddDetail());
+                        ps.setString(3, res.getAddInfo());
+                        ps.setObject(4, res.getCreatedAt());
+                        ps.setString(5, res.getDescription());
+                        ps.setBoolean(6, res.getIsActive());
+                        ps.setString(7, res.getTitle());
+                        ps.setString(8, res.getType());
+                        ps.setObject(9, res.getUpdatedAt());
+                        ps.setObject(10, res.getUserInfo().getId());
+
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return anyDataList.size();
+                    }
+                }
+            );
 
         return anyDatas;
     }
@@ -105,21 +140,4 @@ public class AnyDataServiceImpl implements AnyDataService {
     }
 
 
-    private Map<String, String> parseData(String addInfo, String addDetail) {
-
-        String delimiter = "†";
-
-        int count = addInfo.split(delimiter).length;
-        List<String> keys = Arrays.asList(addInfo.split(delimiter));
-        List<String> values = Arrays.asList(addDetail.split(delimiter));
-        Map<String, String> data = new HashMap<>();
-        for (int i = 0; i < count; i++) {
-            try {
-                data.put(keys.get(i), values.get(i));
-            }catch (Exception e){
-                break;
-            }
-        }
-        return data;
-    }
 }
