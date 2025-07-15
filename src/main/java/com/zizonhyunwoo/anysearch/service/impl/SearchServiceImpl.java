@@ -35,7 +35,6 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public SearchResponse search(String request, Integer page, Integer size, String type) {
         if (request == null || request.isBlank()) {
-            System.out.println(" searc ALL " );
             return searchAll(page,size,type);
         }
         String jsonQuery = """
@@ -65,14 +64,12 @@ public class SearchServiceImpl implements SearchService {
 
     }
 
+
     private SearchResponse searchAll(Integer page, Integer size, String type) {
+
         StringBuilder request = new StringBuilder()
-                .append(uri)
-                .append("/")
-                .append(type)
-                .append("/_search");
-        System.out.println("page = " + page);
-        System.out.println("size = " + size);
+                .append(uri).append("/").append(type).append("/_search");
+
         String body=  """
             {
               "size": %s,
@@ -87,7 +84,6 @@ public class SearchServiceImpl implements SearchService {
         try {
             RestTemplate restTemplate = new RestTemplate();
             String result = restTemplate.postForObject(request.toString(), requestEntity,String.class);
-            System.out.println("result = " + result);
             JsonNode rootNode = objectMapper.readTree(result);
 
             Long totalHits = rootNode.path("hits").path("total").path("value").asLong();
@@ -96,9 +92,7 @@ public class SearchServiceImpl implements SearchService {
             JsonNode hitsArray = rootNode.path("hits").path("hits");
             if (hitsArray.isArray()) {
                 for (JsonNode hit : hitsArray) {
-                    JsonNode source = hit.path("_source");
-                    AnyDataDoc doc = objectMapper.treeToValue(source, AnyDataDoc.class);
-                    content.add(doc);
+                    content.add(objectMapper.treeToValue(hit.path("_source"), AnyDataDoc.class));
                 }
             }
 
@@ -109,8 +103,10 @@ public class SearchServiceImpl implements SearchService {
         return null;
     }
 
+    // 모든 컬렉션 로드
     @Override
     public List<IndexInformation> findAllIndexes() {
+
         IndexCoordinates allIndices = IndexCoordinates.of("*");
         IndexOperations indexOperations = elasticsearchOperations.indexOps(allIndices);
 
@@ -118,4 +114,10 @@ public class SearchServiceImpl implements SearchService {
                 .filter(data->!data.getName().startsWith("."))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String test() {
+        return "";
+    }
+
 }

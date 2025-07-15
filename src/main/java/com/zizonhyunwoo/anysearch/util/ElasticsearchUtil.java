@@ -1,6 +1,5 @@
 package com.zizonhyunwoo.anysearch.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
@@ -24,23 +24,22 @@ public class ElasticsearchUtil {
 
     private final ElasticsearchTemplate elasticsearchTemplate;
     private final ObjectMapper objectMapper;
+    private final ElasticsearchOperations elasticsearchOperations;
+
 
     private String analysisSettingsJson; // analysis 부분만 저장할 변수
     private String mappingsJson; // mappings 부분만 저장할 변수
 
     @PostConstruct
     public void init() throws IOException {
-        // anydataSettings.json 파일에서 settings와 mappings를 분리하여 로드
         ClassPathResource resource = new ClassPathResource("/elastic/anydataSettings.json");
         JsonNode rootNode = objectMapper.readTree(resource.getInputStream());
 
-        // settings.index.analysis 부분만 추출
         JsonNode analysisNode = rootNode.path("settings").path("index").path("analysis");
         if (!analysisNode.isMissingNode()) {
             this.analysisSettingsJson = objectMapper.writeValueAsString(analysisNode);
         } else {
-            log.warn("anydataSettings.json does not contain 'settings.index.analysis' block.");
-            this.analysisSettingsJson = "{}"; // 빈 객체로 초기화
+            this.analysisSettingsJson = "{}";
         }
 
         // mappings 부분 추출
@@ -48,28 +47,8 @@ public class ElasticsearchUtil {
         if (!mappingsNode.isMissingNode()) {
             this.mappingsJson = objectMapper.writeValueAsString(mappingsNode);
         } else {
-            log.warn("anydataSettings.json does not contain 'mappings' block. Auto-mapping will be used.");
-            this.mappingsJson = "{}"; // 빈 객체로 초기화
+            this.mappingsJson = "{}";
         }
-    }
-
-    public Map<String, String> parseData(String addInfo, String addDetail) {
-
-        String delimiter = "†";
-
-        int count = addInfo.split(delimiter).length;
-        List<String> keys = Arrays.asList(addInfo.split(delimiter));
-        List<String> values = Arrays.asList(addDetail.split(delimiter));
-        Map<String, String> data = new HashMap<>();
-        for (int i = 0; i < count; i++) {
-            try {
-                data.put(keys.get(i), values.get(i));
-            }catch (Exception e){
-                log.error(e.getMessage());
-                break;
-            }
-        }
-        return data;
     }
 
     public void saveData(String type, AnyDataDocument anyDataDocument)  {

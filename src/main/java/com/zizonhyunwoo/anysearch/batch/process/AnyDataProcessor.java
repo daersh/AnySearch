@@ -3,6 +3,7 @@ package com.zizonhyunwoo.anysearch.batch.process;
 import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
 import com.zizonhyunwoo.anysearch.util.ElasticsearchUtil;
+import com.zizonhyunwoo.anysearch.util.ParsingUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
@@ -14,12 +15,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AnyDataProcessor implements ItemProcessor<AnyData, AnyDataDocument> {
 
-    private final ElasticsearchUtil elasticsearchUtil;
-
     @Override
     public AnyDataDocument process(AnyData item) {
 
-        Map<String,String> addFieldList = elasticsearchUtil.parseData(item.getAddInfo(),item.getAddDetail());
+        Map<String,String> addFieldList = ParsingUtil.parseData(item.getAddInfo(),item.getAddDetail());
 
         return AnyDataDocument.builder()
                 .id(item.getId().toString())

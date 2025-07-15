@@ -11,4 +11,6 @@ public interface SearchService {
     SearchResponse search(String request, Integer page, Integer size, String type);
 
     List<IndexInformation> findAllIndexes();
+
+    String test();
 }
