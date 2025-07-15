@@ -28,7 +28,7 @@ public class JobController {
     private static final String JOB_NAME = "anyDataToElasticsearchJob";
 
     @GetMapping("/any_data")
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 30 0 * * *")
     public String anyData() {
 
         Set<JobExecution> runningJobs = jobExplorer.findRunningJobExecutions(JOB_NAME);
