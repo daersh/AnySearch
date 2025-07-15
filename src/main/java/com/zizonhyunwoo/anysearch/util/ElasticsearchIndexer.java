@@ -20,11 +20,10 @@ import java.util.*;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ElasticsearchUtil {
+public class ElasticsearchIndexer {
 
     private final ElasticsearchTemplate elasticsearchTemplate;
     private final ObjectMapper objectMapper;
-    private final ElasticsearchOperations elasticsearchOperations;
 
 
     private String analysisSettingsJson; // analysis 부분만 저장할 변수

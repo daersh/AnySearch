@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zizonhyunwoo.anysearch.controller.SearchResponse;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDoc;
 import com.zizonhyunwoo.anysearch.service.SearchService;
+import com.zizonhyunwoo.anysearch.util.ElasticsearchSearcher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,31 +28,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SearchServiceImpl implements SearchService {
 
-    private final ElasticsearchOperations elasticsearchOperations;
     @Value("${spring.elasticsearch.uris}")
     private String uri;
     private final ObjectMapper objectMapper;
+    private final ElasticsearchSearcher elasticsearchSearcher;
 
     @Override
     public SearchResponse search(String request, Integer page, Integer size, String type) {
         if (request == null || request.isBlank()) {
             return searchAll(page,size,type);
         }
-        String jsonQuery = """
-            {
-              "multi_match": {
-                "query": "%s",
-                "fields": ["title", "description", "additionalFields.*"],
-                "analyzer": "korean_tokenizer_advanced_analyzer"
-              }
-            }
-            """.formatted(request.replace("\"", "\\\""));
 
-        Query query = new StringQuery(jsonQuery);
+        Query query = new StringQuery(elasticsearchSearcher.createMultiMatchQuery(
+                request,
+                List.of("title","description", "additionalFields.*"),
+                "korean_tokenizer_advanced_analyzer"));
+
         query.setPageable(PageRequest.of(page,size));
         try {
-            SearchHits<AnyDataDoc> hits = elasticsearchOperations.search(query, AnyDataDoc.class, IndexCoordinates.of(type));
-
+            SearchHits<AnyDataDoc> hits = elasticsearchSearcher.search(query,type, AnyDataDoc.class);
             Long totalHits = hits.getTotalHits();
             List<AnyDataDoc> content = hits.stream().map(SearchHit::getContent).toList();
 
@@ -107,12 +102,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<IndexInformation> findAllIndexes() {
 
-        IndexCoordinates allIndices = IndexCoordinates.of("*");
-        IndexOperations indexOperations = elasticsearchOperations.indexOps(allIndices);
-
-        return indexOperations.getInformation(allIndices).stream()
-                .filter(data->!data.getName().startsWith("."))
-                .collect(Collectors.toList());
+        return elasticsearchSearcher.getAllIndexInfo();
     }
 
     @Override

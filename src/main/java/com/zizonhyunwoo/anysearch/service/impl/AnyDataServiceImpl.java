@@ -8,7 +8,7 @@ import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.response.UserInfoResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
-import com.zizonhyunwoo.anysearch.util.ElasticsearchUtil;
+import com.zizonhyunwoo.anysearch.util.ElasticsearchIndexer;
 import com.zizonhyunwoo.anysearch.util.ParsingUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import java.util.*;
 public class AnyDataServiceImpl implements AnyDataService {
 
     private final AnyDataRepository anyDataRepository;
-    private final ElasticsearchUtil elasticsearchUtil;
+    private final ElasticsearchIndexer elasticsearchIndexer;
     private final JdbcTemplate jdbcTemplate;
 
     @Override
@@ -51,7 +51,7 @@ public class AnyDataServiceImpl implements AnyDataService {
                     .isActive(res.getIsActive())
                     .userId(res.getUserInfo().getEmail())
                     .build();
-            elasticsearchUtil.saveData(res.getType(), doc);
+            elasticsearchIndexer.saveData(res.getType(), doc);
         }
 
         return getAnyDataResponse(res);

@@ -1,7 +1,7 @@
 package com.zizonhyunwoo.anysearch.batch.writer;
 
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
-import com.zizonhyunwoo.anysearch.util.ElasticsearchUtil;
+import com.zizonhyunwoo.anysearch.util.ElasticsearchIndexer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
@@ -14,7 +14,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AnyDataElasticsearchItemWriter implements ItemWriter<AnyDataDocument> {
 
-    private final ElasticsearchUtil elasticsearchUtil;
+    private final ElasticsearchIndexer elasticsearchIndexer;
 
     @Override
     public void write(Chunk<? extends AnyDataDocument> chunk){
@@ -31,8 +31,8 @@ public class AnyDataElasticsearchItemWriter implements ItemWriter<AnyDataDocumen
             list.add(anyData);
         }
 
-        map.forEach(elasticsearchUtil::saveData);
-        elasticsearchUtil.saveData("anydata", list);
+        map.forEach(elasticsearchIndexer::saveData);
+        elasticsearchIndexer.saveData("anydata", list);
 
     }
 

@@ -2,7 +2,6 @@ package com.zizonhyunwoo.anysearch.batch.process;
 
 import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
-import com.zizonhyunwoo.anysearch.util.ElasticsearchUtil;
 import com.zizonhyunwoo.anysearch.util.ParsingUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
