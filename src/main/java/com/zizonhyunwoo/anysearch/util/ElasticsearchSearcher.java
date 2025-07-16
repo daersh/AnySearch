@@ -34,6 +34,17 @@ public class ElasticsearchSearcher {
         return test;
     }
 
+    public String createAutoCompleteQuery(String query) {
+        return
+        """
+            {
+                "match_phrase_prefix": {
+                  "autoCompletion": "%s"
+                }
+            }
+        """.formatted(query);
+    }
+
     public <T> SearchHits<T> search(Query query, String type, Class<T> clazz) {
         return elasticsearchOperations.search(query, clazz, IndexCoordinates.of(type));
     }
@@ -48,4 +59,7 @@ public class ElasticsearchSearcher {
     }
 
 
+    public <T> SearchHits<T> getAutoCompletion(Query query, String type, Class<T> clazz) {
+        return elasticsearchOperations.search(query, clazz ,IndexCoordinates.of(type));
+    }
 }

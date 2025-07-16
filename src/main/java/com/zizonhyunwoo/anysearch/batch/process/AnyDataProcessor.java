@@ -29,6 +29,7 @@ public class AnyDataProcessor implements ItemProcessor<AnyData, AnyDataDocument>
                 .updatedAt(item.getUpdatedAt())
                 .isActive(item.getIsActive())
                 .userId(item.getUserInfo().getEmail())
+                .autoCompletion(item.getTitle())
                 .build();
     }
 

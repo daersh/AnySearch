@@ -12,5 +12,5 @@ public interface SearchService {
 
     List<IndexInformation> findAllIndexes();
 
-    String test();
+    List<String> getAutoCompletion(String query, String type);
 }

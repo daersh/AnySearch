@@ -50,6 +50,7 @@ public class AnyDataServiceImpl implements AnyDataService {
                     .updatedAt(res.getUpdatedAt())
                     .isActive(res.getIsActive())
                     .userId(res.getUserInfo().getEmail())
+                    .autoCompletion(res.getTitle())
                     .build();
             elasticsearchIndexer.saveData(res.getType(), doc);
         }

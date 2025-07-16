@@ -39,4 +39,7 @@ public class AnyDataDocument {
 
     @Field(type = FieldType.Keyword)
     private String userId;
+
+    @Field(type = FieldType.Search_As_You_Type)
+    private String autoCompletion;
 }

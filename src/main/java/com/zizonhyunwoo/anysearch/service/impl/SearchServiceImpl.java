@@ -105,9 +105,26 @@ public class SearchServiceImpl implements SearchService {
         return elasticsearchSearcher.getAllIndexInfo();
     }
 
+
     @Override
-    public String test() {
-        return "";
+    public List<String> getAutoCompletion(String request, String type) {
+        Query query = new StringQuery(elasticsearchSearcher.createAutoCompleteQuery(request));
+
+        query.setPageable(PageRequest.of(0,5));
+        try {
+            SearchHits<AnyDataDoc> hits = elasticsearchSearcher.getAutoCompletion(query,type, AnyDataDoc.class);
+            Long totalHits = hits.getTotalHits();
+            return hits.stream()
+                    .map(SearchHit::getContent)
+                    .toList()
+                    .subList(0,totalHits<5?Integer.parseInt(String.valueOf(totalHits)):5)
+                    .stream()
+                    .map(AnyDataDoc::getTitle)
+                    .toList();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
