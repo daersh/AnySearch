@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "index_sample")
+//@Document(indexName = "index_sample")
 public class IndexSample {
 
     @Id
