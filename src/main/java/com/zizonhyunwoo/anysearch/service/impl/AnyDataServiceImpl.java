@@ -137,7 +137,8 @@ public class AnyDataServiceImpl implements AnyDataService {
 
     @Override
     public List<String> getDataType() {
-        return anyDataRepository.findType();
+        PageRequest pageRequest = PageRequest.of(0, Integer.MAX_VALUE);
+        return anyDataRepository.findType(pageRequest).toList();
     }
 
 

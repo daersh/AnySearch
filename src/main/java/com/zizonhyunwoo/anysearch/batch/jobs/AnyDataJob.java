@@ -2,6 +2,7 @@ package com.zizonhyunwoo.anysearch.batch.jobs;
 
 
 import com.zizonhyunwoo.anysearch.batch.process.AnyDataProcessor;
+import com.zizonhyunwoo.anysearch.batch.writer.AnyDataTypeWriter;
 import com.zizonhyunwoo.anysearch.batch.writer.AnyDataElasticsearchItemWriter;
 import com.zizonhyunwoo.anysearch.dao.AnyDataRepository;
 import com.zizonhyunwoo.anysearch.domain.AnyData;
@@ -30,11 +31,23 @@ public class AnyDataJob {
     private final PlatformTransactionManager platformTransactionManager;
     private final AnyDataProcessor anyDataProcessor;
     private final AnyDataElasticsearchItemWriter anyDataElasticsearchItemWriter;
+    private final AnyDataTypeWriter anyDataTypeWriter;
 
     @Bean
     public Job anyDataToElasticsearchJob(){
         return new JobBuilder("anyDataToElasticsearchJob",jobRepository)
-                .start(transferAnyDataToElasticsearchStep())
+                .start(initSearcher())
+                .next(transferAnyDataToElasticsearchStep())
+                .build();
+    }
+
+    private Step initSearcher() {
+        return new StepBuilder("initializeSearcher", jobRepository)
+                .<String, String>chunk(
+                        10,platformTransactionManager
+                )
+                .reader(anyDataTypeReader())
+                .writer(anyDataTypeWriter)
                 .build();
     }
 
@@ -58,5 +71,14 @@ public class AnyDataJob {
                 .sorts(Map.of("createdAt", Sort.Direction.ASC))
                 .build();
     }
-    
+
+    private ItemReader<String> anyDataTypeReader() {
+        return new RepositoryItemReaderBuilder<String>()
+                .name("anyDataTypeReader")
+                .repository(anyDataRepository)
+                .methodName("findType")
+                .sorts(Map.of("type", Sort.Direction.ASC))
+                .build();
+    }
+
 }

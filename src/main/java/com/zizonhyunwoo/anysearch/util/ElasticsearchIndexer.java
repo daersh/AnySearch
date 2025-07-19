@@ -93,4 +93,14 @@ public class ElasticsearchIndexer {
         IndexCoordinates indexCoordinates = getIndexCoordinates(dynamicIndexName);
         elasticsearchTemplate.save(value, indexCoordinates);
     }
+
+    // delete index - 컬렉션 제거
+    public void delete(String type){
+        System.out.println("type = " + type);
+        type= type.startsWith("anydata")?
+                type : "anydata_" + type.toLowerCase(Locale.KOREA);
+        System.out.println("parsed type = " + type);
+        IndexCoordinates dynamicIndexCoordinates = IndexCoordinates.of(type);
+        elasticsearchTemplate.indexOps(dynamicIndexCoordinates).delete();
+    }
 }
