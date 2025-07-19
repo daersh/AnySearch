@@ -1,0 +1,19 @@
+{
+  "description": "Extract attachment information from 'document_binary_data' field for file indexing",
+  "processors": [
+    {
+      "attachment": {
+        "field": "document_binary_data",
+        "properties": [
+          "content",
+          "content_type",
+          "language",
+          "title",
+          "author",
+          "date"
+        ],
+        "remove_binary": true
+      }
+    }
+  ]
+}

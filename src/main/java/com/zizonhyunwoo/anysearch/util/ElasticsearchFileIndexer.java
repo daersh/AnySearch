@@ -1,11 +1,17 @@
 package com.zizonhyunwoo.anysearch.util;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.IndexResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
+import com.zizonhyunwoo.anysearch.elastic.index.AnyDataFile;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
@@ -15,15 +21,13 @@ import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ElasticsearchIndexer {
+public class ElasticsearchFileIndexer {
 
     private final ElasticsearchTemplate elasticsearchTemplate;
     private final ObjectMapper objectMapper;
@@ -31,12 +35,12 @@ public class ElasticsearchIndexer {
     private String analysisSettingsJson; // analysis 부분만 저장할 변수
     private String mappingsJson; // mappings 부분만 저장할 변수
     private ClassPathResource ingestPipelineJson;
+    private final ElasticsearchClient  elasticsearchClient;
     private final RestClient restClient;
 
     @PostConstruct
     public void init() throws IOException {
-        ClassPathResource resource = new ClassPathResource("/elastic/anydataSettings.json");
-        ingestPipelineJson = new ClassPathResource("/elastic/fileData.json");
+        ClassPathResource resource = new ClassPathResource("/elastic/fileData.json");
 
         JsonNode rootNode = objectMapper.readTree(resource.getInputStream());
 
@@ -54,16 +58,54 @@ public class ElasticsearchIndexer {
         } else {
             this.mappingsJson = "{}";
         }
+        this.ingestPipelineJson = new ClassPathResource("/elastic/filePipeLine.json"); // <- 이 줄 추가
+        createOrUpdateIngestPipeline();
     }
 
+    private void createOrUpdateIngestPipeline() {
+        try {
+            String pipelineId = "file_ingest";
 
+            JsonNode pipelineNode = objectMapper.readTree(ingestPipelineJson.getInputStream());
+            String pipelineBody = objectMapper.writeValueAsString(pipelineNode);
 
-    public void saveData(String type, AnyDataDocument anyDataDocument)  {
+            Request request = new Request("PUT", "/_ingest/pipeline/" + pipelineId);
+            request.setJsonEntity(pipelineBody);
 
-        String dynamicIndexName = type.equals("anydata")?type:"anydata_" + type.toLowerCase(Locale.KOREA);
-        IndexCoordinates indexCoordinates = getIndexCoordinates(dynamicIndexName);
+            Response response = restClient.performRequest(request);
+            log.info("Ingest pipeline created/updated successfully: {}", pipelineId);
 
-        elasticsearchTemplate.save(anyDataDocument, indexCoordinates);
+        } catch (Exception e) {
+            log.error("Failed to create/update ingest pipeline", e);
+        }
+    }
+
+    public void saveFile(String fileName, byte[] data) {
+        try {
+            String base64Data = Base64.getEncoder().encodeToString(data);
+
+            String id = UUID.randomUUID().toString();
+
+            Map<String, Object> doc = new HashMap<>();
+            doc.put("id", id);
+            doc.put("filename", fileName);
+            doc.put("data", base64Data);
+            doc.put("uploadedAt", Instant.now().toString());
+
+            IndexRequest<Map<String, Object>> request = IndexRequest.of(i -> i
+                    .index("anydata_file")
+                    .id(id)
+                    .document(doc)
+                    .pipeline("file_ingest_pipeline")
+            );
+
+            IndexResponse response = elasticsearchClient.index(request);
+
+            log.info("Indexed file '{}' with ID '{}'", fileName, response.id());
+
+        } catch (Exception e) {
+            log.error("Failed to index file '{}'", fileName, e);
+        }
     }
 
     public IndexCoordinates getIndexCoordinates(String type) {
@@ -95,24 +137,4 @@ public class ElasticsearchIndexer {
         return dynamicIndexCoordinates;
     }
 
-    public void saveData(String type, List<AnyDataDocument> value) {
-        String dynamicIndexName = type.equals("anydata")?type:"anydata_" + type.toLowerCase(Locale.KOREA);
-
-        IndexCoordinates indexCoordinates = getIndexCoordinates(dynamicIndexName);
-        elasticsearchTemplate.save(value, indexCoordinates);
-    }
-
-    // delete index - 컬렉션 제거
-    public void delete(String type){
-        System.out.println("type = " + type);
-        type= type.startsWith("anydata")?
-                type : "anydata_" + type.toLowerCase(Locale.KOREA);
-        IndexCoordinates dynamicIndexCoordinates = IndexCoordinates.of(type);
-        elasticsearchTemplate.indexOps(dynamicIndexCoordinates).delete();
-    }
-
-    public void saveFile(String fileName, byte[] data) {
-        IndexCoordinates dynamicIndexCoordinates = getIndexCoordinates("anydata_file");
-
-    }
 }

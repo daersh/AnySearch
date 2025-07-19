@@ -1,5 +1,6 @@
 package com.zizonhyunwoo.anysearch.service;
 
+import com.zizonhyunwoo.anysearch.controller.AnyDataRequestWithFile;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
@@ -22,4 +23,5 @@ public interface AnyDataService {
 
     List<String> getDataType();
 
+    void insertFile(AnyDataRequestWithFile request);
 }

@@ -60,4 +60,11 @@ public class AnyDataController {
     public List<String> getDataType(){
         return anyDataService.getDataType();
     }
+
+    @PostMapping("/file")
+    public void insertFile(
+            @RequestBody AnyDataRequestWithFile request
+    ){
+        anyDataService.insertFile(request);
+    }
 }

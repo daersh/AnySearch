@@ -1,5 +1,6 @@
 package com.zizonhyunwoo.anysearch.service.impl;
 
+import com.zizonhyunwoo.anysearch.controller.AnyDataRequestWithFile;
 import com.zizonhyunwoo.anysearch.dao.AnyDataRepository;
 import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
@@ -8,25 +9,31 @@ import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.response.UserInfoResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
+import com.zizonhyunwoo.anysearch.util.ElasticsearchFileIndexer;
 import com.zizonhyunwoo.anysearch.util.ElasticsearchIndexer;
 import com.zizonhyunwoo.anysearch.util.ParsingUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnyDataServiceImpl implements AnyDataService {
 
     private final AnyDataRepository anyDataRepository;
     private final ElasticsearchIndexer elasticsearchIndexer;
+    private final ElasticsearchFileIndexer elasticsearchFileIndexer;
     private final JdbcTemplate jdbcTemplate;
 
     @Override
@@ -35,6 +42,7 @@ public class AnyDataServiceImpl implements AnyDataService {
 
         boolean flag = anyDataRepository.existsByType(anyData.type());
         AnyData res= anyDataRepository.save(new AnyData(userInfo,anyData));
+
 
         if (flag) {// 새로운 타입이 아니라면 추가
 
@@ -139,6 +147,19 @@ public class AnyDataServiceImpl implements AnyDataService {
     public List<String> getDataType() {
         PageRequest pageRequest = PageRequest.of(0, Integer.MAX_VALUE);
         return anyDataRepository.findType(pageRequest).toList();
+    }
+
+    @Override
+    public void insertFile(AnyDataRequestWithFile request) {
+        MultipartFile file =request.file();
+        Base64.Encoder encoder = Base64.getEncoder();
+        try {
+            String fileName = file.getOriginalFilename();
+            byte[] data = encoder.encode(file.getBytes());
+            elasticsearchFileIndexer.saveFile(fileName,data);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+        }
     }
 
 
