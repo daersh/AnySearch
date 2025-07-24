@@ -15,6 +15,7 @@ import com.zizonhyunwoo.anysearch.util.ParsingUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -22,6 +23,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -151,15 +154,39 @@ public class AnyDataServiceImpl implements AnyDataService {
 
     @Override
     public void insertFile(MultipartFile file) {
-        Base64.Encoder encoder = Base64.getEncoder();
         try {
             String fileName = file.getOriginalFilename();
-            byte[] data = encoder.encode(file.getBytes());
-            elasticsearchFileIndexer.saveFile(fileName,data);
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+            String charset = detectCharset(file);
+            System.out.println("charset = " + charset);
+            if (charset == null) charset = "UTF-8";
+
+            String content = new String(file.getBytes(), charset);
+
+            byte[] utf8Bytes = content.getBytes(StandardCharsets.UTF_8);
+
+            elasticsearchFileIndexer.saveFile(fileName, utf8Bytes);
+        } catch (Exception e) {
+            log.error("파일 저장 실패: " + e.getMessage(), e);
         }
     }
 
+
+    private String detectCharset(MultipartFile file) {
+        try {
+            byte[] fileBytes = file.getBytes();
+
+            UniversalDetector detector = new UniversalDetector(null);
+            detector.handleData(fileBytes, 0, fileBytes.length);
+            detector.dataEnd();
+
+            String detectedCharset = detector.getDetectedCharset();
+            detector.reset();
+
+            return detectedCharset;
+        } catch (IOException e) {
+            log.error("인코딩 감지 중 오류 발생", e);
+            return null;
+        }
+    }
 
 }
