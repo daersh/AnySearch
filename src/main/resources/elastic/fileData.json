@@ -34,6 +34,16 @@
   },
   "mappings": {
     "properties": {
+      "filename": {
+        "type": "text",
+        "analyzer": "korean_tokenizer_advanced_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
       "attachment": {
         "type": "object",
         "properties": {
