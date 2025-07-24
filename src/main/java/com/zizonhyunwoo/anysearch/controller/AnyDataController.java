@@ -2,6 +2,7 @@ package com.zizonhyunwoo.anysearch.controller;
 
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
+import com.zizonhyunwoo.anysearch.request.AnyDataRequestWithFile;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -63,7 +65,7 @@ public class AnyDataController {
 
     @PostMapping("/file")
     public void insertFile(
-            @RequestBody AnyDataRequestWithFile request
+            @RequestPart("file") MultipartFile request
     ){
         anyDataService.insertFile(request);
     }

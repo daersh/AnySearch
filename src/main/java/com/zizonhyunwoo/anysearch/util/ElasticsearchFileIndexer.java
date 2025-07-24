@@ -58,7 +58,10 @@ public class ElasticsearchFileIndexer {
         } else {
             this.mappingsJson = "{}";
         }
-        this.ingestPipelineJson = new ClassPathResource("/elastic/filePipeLine.json"); // <- 이 줄 추가
+
+
+        this.ingestPipelineJson = new ClassPathResource("/elastic/filePipeLine.json");
+
         createOrUpdateIngestPipeline();
     }
 
@@ -89,14 +92,14 @@ public class ElasticsearchFileIndexer {
             Map<String, Object> doc = new HashMap<>();
             doc.put("id", id);
             doc.put("filename", fileName);
-            doc.put("data", base64Data);
+            doc.put("document_binary_data", base64Data);
             doc.put("uploadedAt", Instant.now().toString());
 
             IndexRequest<Map<String, Object>> request = IndexRequest.of(i -> i
                     .index("anydata_file")
                     .id(id)
                     .document(doc)
-                    .pipeline("file_ingest_pipeline")
+                    .pipeline("file_ingest")
             );
 
             IndexResponse response = elasticsearchClient.index(request);

@@ -1,9 +1,10 @@
 package com.zizonhyunwoo.anysearch.service;
 
-import com.zizonhyunwoo.anysearch.controller.AnyDataRequestWithFile;
+import com.zizonhyunwoo.anysearch.request.AnyDataRequestWithFile;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,5 +24,5 @@ public interface AnyDataService {
 
     List<String> getDataType();
 
-    void insertFile(AnyDataRequestWithFile request);
+    void insertFile(MultipartFile request);
 }

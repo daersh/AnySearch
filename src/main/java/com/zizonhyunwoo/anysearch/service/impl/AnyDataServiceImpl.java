@@ -1,6 +1,6 @@
 package com.zizonhyunwoo.anysearch.service.impl;
 
-import com.zizonhyunwoo.anysearch.controller.AnyDataRequestWithFile;
+import com.zizonhyunwoo.anysearch.request.AnyDataRequestWithFile;
 import com.zizonhyunwoo.anysearch.dao.AnyDataRepository;
 import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
@@ -150,8 +150,7 @@ public class AnyDataServiceImpl implements AnyDataService {
     }
 
     @Override
-    public void insertFile(AnyDataRequestWithFile request) {
-        MultipartFile file =request.file();
+    public void insertFile(MultipartFile file) {
         Base64.Encoder encoder = Base64.getEncoder();
         try {
             String fileName = file.getOriginalFilename();

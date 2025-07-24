@@ -30,13 +30,10 @@ public class ElasticsearchIndexer {
 
     private String analysisSettingsJson; // analysis 부분만 저장할 변수
     private String mappingsJson; // mappings 부분만 저장할 변수
-    private ClassPathResource ingestPipelineJson;
-    private final RestClient restClient;
 
     @PostConstruct
     public void init() throws IOException {
         ClassPathResource resource = new ClassPathResource("/elastic/anydataSettings.json");
-        ingestPipelineJson = new ClassPathResource("/elastic/fileData.json");
 
         JsonNode rootNode = objectMapper.readTree(resource.getInputStream());
 

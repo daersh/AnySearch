@@ -1,4 +1,4 @@
-package com.zizonhyunwoo.anysearch.controller;
+package com.zizonhyunwoo.anysearch.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
