@@ -21,13 +21,13 @@ services:
       - elasticsearch
       - db
     networks:
-      - spring-boot-network # 네트워크 통일
+      - spring-boot-network
 
   elasticsearch:
     build:
       context: .
-      dockerfile: Dockerfile.elasticsearch # Elasticsearch 전용 Dockerfile 사용
-    image: custom-elasticsearch:8.17.6 # 빌드된 이미지에 태그 부여 (Kibana 버전과 일치)
+      dockerfile: Dockerfile.elasticsearch
+    image: custom-elasticsearch:8.17.6
     container_name: elasticsearch_instance
     environment:
       - discovery.type=single-node
@@ -42,19 +42,6 @@ services:
       - esdata:/usr/share/elasticsearch/data # 데이터 영속성을 위해 볼륨 사용
     networks:
       - spring-boot-network
-
-  kibana:
-    image: kibana:8.17.6 # Elasticsearch와 버전 일치
-    container_name: kibana_instance
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
-    networks:
-      - spring-boot-network # 네트워크 통일
-
   db:
     image: postgres:16-alpine
     container_name: postgres_db
