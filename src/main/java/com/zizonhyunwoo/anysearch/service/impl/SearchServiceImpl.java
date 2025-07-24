@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zizonhyunwoo.anysearch.controller.SearchResponse;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDoc;
+import com.zizonhyunwoo.anysearch.elastic.index.AnyDataFile;
 import com.zizonhyunwoo.anysearch.service.SearchService;
 import com.zizonhyunwoo.anysearch.util.ElasticsearchSearcher;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +37,18 @@ public class SearchServiceImpl implements SearchService {
         if (request == null || request.isBlank()) {
             return searchAll(page,size,type);
         }
-
-        Query query = new StringQuery(elasticsearchSearcher.createMultiMatchQuery(
-                request,
-                List.of("title","description", "additionalFields.*"),
-                "korean_tokenizer_advanced_analyzer"));
-
+        Query query;
+        if(type.equals("anydata_file")){
+            return searchFile(request,page,size,type);
+        }else {
+            query = new StringQuery(elasticsearchSearcher.createMultiMatchQuery(
+                    request,
+                    List.of("title", "description", "additionalFields.*"),
+                    "korean_tokenizer_advanced_analyzer"));
+        }
         query.setPageable(PageRequest.of(page,size));
         try {
+
             SearchHits<AnyDataDoc> hits = elasticsearchSearcher.search(query,type, AnyDataDoc.class);
             Long totalHits = hits.getTotalHits();
             List<AnyDataDoc> content = hits.stream().map(SearchHit::getContent).toList();
@@ -55,6 +60,26 @@ public class SearchServiceImpl implements SearchService {
         }
         return null;
 
+    }
+
+    private SearchResponse searchFile(String request, Integer page, Integer size, String type) {
+        Query query= new StringQuery(elasticsearchSearcher.createMultiMatchQuery(
+                request,
+                List.of("filename","attachment.content"),
+                "korean_tokenizer_advanced_analyzer"));
+        query.setPageable(PageRequest.of(page,size));
+        try {
+
+            SearchHits<AnyDataFile> hits = elasticsearchSearcher.search(query,type, AnyDataFile.class);
+            Long totalHits = hits.getTotalHits();
+            List<AnyDataFile> content = hits.stream().map(SearchHit::getContent).toList();
+
+
+            return new SearchResponse(totalHits,content);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -80,7 +105,17 @@ public class SearchServiceImpl implements SearchService {
             JsonNode rootNode = objectMapper.readTree(result);
 
             Long totalHits = rootNode.path("hits").path("total").path("value").asLong();
+            if(type.equals("anydata_file")){
+                List<AnyDataFile> content = new ArrayList<>();
+                JsonNode hitsArray = rootNode.path("hits").path("hits");
+                if (hitsArray.isArray()) {
+                    for (JsonNode hit : hitsArray) {
+                        content.add(objectMapper.treeToValue(hit.path("_source"), AnyDataFile.class));
+                    }
+                }
 
+                return new SearchResponse(totalHits, content);
+            }
             List<AnyDataDoc> content = new ArrayList<>();
             JsonNode hitsArray = rootNode.path("hits").path("hits");
             if (hitsArray.isArray()) {

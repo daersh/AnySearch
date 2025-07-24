@@ -29,18 +29,6 @@ public class AnyDataDoc {
 
     @Field(type = FieldType.Text, fielddata = true)
     private String type;
-//
-//    @Field(type = FieldType.Keyword)
-//    private Boolean isActive;
-//
-//    @Field(type = FieldType.Text)
-//    private String userId;
-//
-//    @Field(type = FieldType.Date)
-//    private LocalDateTime createdAt;
-//    @Field(type = FieldType.Date)
-//    private LocalDateTime updatedAt;
-//
     @Field(type = FieldType.Object)
     private Map<String, String> additionalFields;
 

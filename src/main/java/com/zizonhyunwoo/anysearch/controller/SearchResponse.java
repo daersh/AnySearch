@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class SearchResponse {
     Long count;
-    List<AnyDataDoc> docs;
+    List<?> docs;
 }
