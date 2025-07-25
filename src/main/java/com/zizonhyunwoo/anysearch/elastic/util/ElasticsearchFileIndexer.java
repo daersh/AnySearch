@@ -1,4 +1,4 @@
-package com.zizonhyunwoo.anysearch.util.search;
+package com.zizonhyunwoo.anysearch.elastic.util;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexRequest;

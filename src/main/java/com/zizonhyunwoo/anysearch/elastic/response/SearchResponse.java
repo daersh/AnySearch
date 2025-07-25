@@ -1,4 +1,4 @@
-package com.zizonhyunwoo.anysearch.controller;
+package com.zizonhyunwoo.anysearch.elastic.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

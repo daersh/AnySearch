@@ -2,7 +2,6 @@ package com.zizonhyunwoo.anysearch.controller;
 
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
-import com.zizonhyunwoo.anysearch.request.AnyDataRequestWithFile;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
 import lombok.RequiredArgsConstructor;

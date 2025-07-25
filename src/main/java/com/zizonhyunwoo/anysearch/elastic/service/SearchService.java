@@ -1,7 +1,7 @@
-package com.zizonhyunwoo.anysearch.service;
+package com.zizonhyunwoo.anysearch.elastic.service;
 
 
-import com.zizonhyunwoo.anysearch.controller.SearchResponse;
+import com.zizonhyunwoo.anysearch.elastic.response.SearchResponse;
 import org.springframework.data.elasticsearch.core.IndexInformation;
 
 import java.util.List;

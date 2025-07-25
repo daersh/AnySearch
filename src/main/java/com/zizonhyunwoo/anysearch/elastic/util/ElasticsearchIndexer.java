@@ -1,4 +1,4 @@
-package com.zizonhyunwoo.anysearch.util.search;
+package com.zizonhyunwoo.anysearch.elastic.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

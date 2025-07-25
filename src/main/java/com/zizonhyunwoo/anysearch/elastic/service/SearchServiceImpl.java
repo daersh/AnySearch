@@ -1,12 +1,11 @@
-package com.zizonhyunwoo.anysearch.service.impl;
+package com.zizonhyunwoo.anysearch.elastic.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zizonhyunwoo.anysearch.controller.SearchResponse;
+import com.zizonhyunwoo.anysearch.elastic.response.SearchResponse;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataFile;
-import com.zizonhyunwoo.anysearch.service.SearchService;
-import com.zizonhyunwoo.anysearch.util.search.ElasticsearchSearcher;
+import com.zizonhyunwoo.anysearch.elastic.util.ElasticsearchSearcher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

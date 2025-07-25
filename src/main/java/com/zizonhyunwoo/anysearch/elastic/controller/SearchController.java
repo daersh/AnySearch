@@ -1,6 +1,7 @@
-package com.zizonhyunwoo.anysearch.controller;
+package com.zizonhyunwoo.anysearch.elastic.controller;
 
-import com.zizonhyunwoo.anysearch.service.SearchService;
+import com.zizonhyunwoo.anysearch.elastic.response.SearchResponse;
+import com.zizonhyunwoo.anysearch.elastic.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.elasticsearch.core.*;
