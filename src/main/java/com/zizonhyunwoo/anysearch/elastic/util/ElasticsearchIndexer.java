@@ -104,8 +104,4 @@ public class ElasticsearchIndexer {
         elasticsearchTemplate.indexOps(dynamicIndexCoordinates).delete();
     }
 
-    public void saveFile(String fileName, byte[] data) {
-        IndexCoordinates dynamicIndexCoordinates = getIndexCoordinates("anydata_file");
-
-    }
 }

@@ -15,7 +15,7 @@ public class AnyDataTypeWriter implements ItemWriter<String> {
     private final ElasticsearchIndexer indexer;
 
     @Override
-    public void write(Chunk<? extends String> chunk) throws Exception {
+    public void write(Chunk<? extends String> chunk) {
         indexer.delete("anydata");
         for (String type : chunk) {
             indexer.delete(type);

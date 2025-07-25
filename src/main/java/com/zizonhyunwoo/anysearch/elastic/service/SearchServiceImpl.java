@@ -55,7 +55,7 @@ public class SearchServiceImpl implements SearchService {
             return new SearchResponse(totalHits,content);
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
 
@@ -76,7 +76,7 @@ public class SearchServiceImpl implements SearchService {
 
             return new SearchResponse(totalHits,content);
         }catch (Exception e){
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -125,7 +125,7 @@ public class SearchServiceImpl implements SearchService {
 
             return new SearchResponse(totalHits, content);
         }catch (Exception e){
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -154,7 +154,7 @@ public class SearchServiceImpl implements SearchService {
                     .map(AnyDataDocument::getTitle)
                     .toList();
         }catch (Exception e){
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
