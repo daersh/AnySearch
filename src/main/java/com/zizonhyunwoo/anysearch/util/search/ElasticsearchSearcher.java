@@ -1,4 +1,4 @@
-package com.zizonhyunwoo.anysearch.util;
+package com.zizonhyunwoo.anysearch.util.search;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,5 +1,8 @@
 package com.zizonhyunwoo.anysearch.elastic.index;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,9 +32,12 @@ public class AnyDataDocument {
     @Field(type = FieldType.Object, dynamic = Dynamic.TRUE)
     private Map<String, String> additionalFields;
 
-    @Field(type = FieldType.Date)
+    @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="uuuu-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
-    @Field(type = FieldType.Date)
+
+    @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="uuuu-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
     @Field(type = FieldType.Boolean)

@@ -1,6 +1,6 @@
 package com.zizonhyunwoo.anysearch.batch.writer;
 
-import com.zizonhyunwoo.anysearch.util.ElasticsearchIndexer;
+import com.zizonhyunwoo.anysearch.util.search.ElasticsearchIndexer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;

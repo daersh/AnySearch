@@ -1,6 +1,5 @@
 package com.zizonhyunwoo.anysearch.service.impl;
 
-import com.zizonhyunwoo.anysearch.request.AnyDataRequestWithFile;
 import com.zizonhyunwoo.anysearch.dao.AnyDataRepository;
 import com.zizonhyunwoo.anysearch.domain.AnyData;
 import com.zizonhyunwoo.anysearch.domain.UserInfo;
@@ -9,8 +8,8 @@ import com.zizonhyunwoo.anysearch.request.AnyDataInsertRequest;
 import com.zizonhyunwoo.anysearch.response.AnyDataResponse;
 import com.zizonhyunwoo.anysearch.response.UserInfoResponse;
 import com.zizonhyunwoo.anysearch.service.AnyDataService;
-import com.zizonhyunwoo.anysearch.util.ElasticsearchFileIndexer;
-import com.zizonhyunwoo.anysearch.util.ElasticsearchIndexer;
+import com.zizonhyunwoo.anysearch.util.search.ElasticsearchFileIndexer;
+import com.zizonhyunwoo.anysearch.util.search.ElasticsearchIndexer;
 import com.zizonhyunwoo.anysearch.util.ParsingUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

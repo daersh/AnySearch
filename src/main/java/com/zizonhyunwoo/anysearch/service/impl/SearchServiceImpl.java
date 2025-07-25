@@ -3,10 +3,10 @@ package com.zizonhyunwoo.anysearch.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zizonhyunwoo.anysearch.controller.SearchResponse;
-import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDoc;
+import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataFile;
 import com.zizonhyunwoo.anysearch.service.SearchService;
-import com.zizonhyunwoo.anysearch.util.ElasticsearchSearcher;
+import com.zizonhyunwoo.anysearch.util.search.ElasticsearchSearcher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +49,9 @@ public class SearchServiceImpl implements SearchService {
         query.setPageable(PageRequest.of(page,size));
         try {
 
-            SearchHits<AnyDataDoc> hits = elasticsearchSearcher.search(query,type, AnyDataDoc.class);
+            SearchHits<AnyDataDocument> hits = elasticsearchSearcher.search(query,type, AnyDataDocument.class);
             Long totalHits = hits.getTotalHits();
-            List<AnyDataDoc> content = hits.stream().map(SearchHit::getContent).toList();
+            List<AnyDataDocument> content = hits.stream().map(SearchHit::getContent).toList();
 
             return new SearchResponse(totalHits,content);
 
@@ -116,11 +116,11 @@ public class SearchServiceImpl implements SearchService {
 
                 return new SearchResponse(totalHits, content);
             }
-            List<AnyDataDoc> content = new ArrayList<>();
+            List<AnyDataDocument> content = new ArrayList<>();
             JsonNode hitsArray = rootNode.path("hits").path("hits");
             if (hitsArray.isArray()) {
                 for (JsonNode hit : hitsArray) {
-                    content.add(objectMapper.treeToValue(hit.path("_source"), AnyDataDoc.class));
+                    content.add(objectMapper.treeToValue(hit.path("_source"), AnyDataDocument.class));
                 }
             }
 
@@ -145,14 +145,14 @@ public class SearchServiceImpl implements SearchService {
 
         query.setPageable(PageRequest.of(0,5));
         try {
-            SearchHits<AnyDataDoc> hits = elasticsearchSearcher.getAutoCompletion(query,type, AnyDataDoc.class);
+            SearchHits<AnyDataDocument> hits = elasticsearchSearcher.getAutoCompletion(query,type, AnyDataDocument.class);
             Long totalHits = hits.getTotalHits();
             return hits.stream()
                     .map(SearchHit::getContent)
                     .toList()
                     .subList(0,totalHits<5?Integer.parseInt(String.valueOf(totalHits)):5)
                     .stream()
-                    .map(AnyDataDoc::getTitle)
+                    .map(AnyDataDocument::getTitle)
                     .toList();
         }catch (Exception e){
             e.printStackTrace();

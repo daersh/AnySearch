@@ -59,10 +59,12 @@
         "dynamic": true
       },
       "createdAt": {
-        "type": "date"
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSSSSS||yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||strict_date_optional_time||epoch_millis"
       },
       "updatedAt": {
-        "type": "date"
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSSSSS||yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||strict_date_optional_time||epoch_millis"
       },
       "isActive": {
         "type": "boolean"

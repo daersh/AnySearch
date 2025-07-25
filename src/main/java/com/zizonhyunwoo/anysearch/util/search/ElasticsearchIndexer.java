@@ -1,4 +1,4 @@
-package com.zizonhyunwoo.anysearch.util;
+package com.zizonhyunwoo.anysearch.util.search;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,7 +6,6 @@ import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.client.RestClient;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
@@ -16,9 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
 
 @Component
 @Slf4j
