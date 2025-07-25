@@ -57,6 +57,8 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/any_data/file").permitAll()
+                        .requestMatchers("/api/batch/naver").permitAll()
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/api/login/register").permitAll()
                         .requestMatchers("/api/user/**").authenticated()
