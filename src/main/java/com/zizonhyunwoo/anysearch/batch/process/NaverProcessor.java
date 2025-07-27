@@ -2,19 +2,14 @@ package com.zizonhyunwoo.anysearch.batch.process;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zizonhyunwoo.anysearch.batch.writer.NaverData;
-import com.zizonhyunwoo.anysearch.domain.AnyData;
-import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
-import com.zizonhyunwoo.anysearch.util.ParsingUtil;
+import com.zizonhyunwoo.anysearch.elastic.index.NaverData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component

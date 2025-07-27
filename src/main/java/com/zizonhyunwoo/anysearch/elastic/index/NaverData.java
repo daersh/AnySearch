@@ -1,4 +1,4 @@
-package com.zizonhyunwoo.anysearch.batch.writer;
+package com.zizonhyunwoo.anysearch.elastic.index;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

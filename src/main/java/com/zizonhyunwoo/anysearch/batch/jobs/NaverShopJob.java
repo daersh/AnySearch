@@ -2,8 +2,8 @@ package com.zizonhyunwoo.anysearch.batch.jobs;
 
 
 import com.zizonhyunwoo.anysearch.batch.process.NaverProcessor;
-import com.zizonhyunwoo.anysearch.batch.writer.NaverData;
-import com.zizonhyunwoo.anysearch.batch.writer.NaverReader;
+import com.zizonhyunwoo.anysearch.elastic.index.NaverData;
+import com.zizonhyunwoo.anysearch.batch.reader.NaverReader;
 import com.zizonhyunwoo.anysearch.batch.writer.NaverWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;

@@ -1,6 +1,5 @@
-package com.zizonhyunwoo.anysearch.batch.writer;
+package com.zizonhyunwoo.anysearch.batch.reader;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.beans.Encoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @Slf4j
@@ -31,10 +27,13 @@ public class NaverReader implements ItemReader<String> {
     @Value("${naver.url}")
     private String url;
     private Boolean flag = false;
+    private List<String> names = Arrays.asList("갤럭시","애플","스마트폰");
+    private int cnt =0;
 
     @Override
     public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-        if (flag) {
+        if (cnt==3) {
+            cnt=0;
             return null;
         }
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
@@ -55,13 +54,12 @@ public class NaverReader implements ItemReader<String> {
         System.out.println("uriBuilder = " + uriBuilder.toUriString());
         ResponseEntity<String> result = restTemplate.exchange(
 //                uriBuilder.toUriString(),
-                "https://openapi.naver.com/v1/search/shop.json?query="+"삼성"+"&display=10&start=1&sort=sim&exclude=used:rental:cbshop",
+                "https://openapi.naver.com/v1/search/shop.json?query="+names.get(cnt++)+"&display=100&start=1&sort=sim&exclude=used:rental:cbshop",
                 HttpMethod.GET,
                 requestEntity,
                 String.class);
 
         System.out.println("result = " + result);
-        flag = true;
 
         return result.getBody();
     }

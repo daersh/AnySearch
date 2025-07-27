@@ -1,7 +1,6 @@
 package com.zizonhyunwoo.anysearch.elastic.index;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.zizonhyunwoo.anysearch.batch.writer.NaverData;
 import com.zizonhyunwoo.anysearch.util.ParsingUtil;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
