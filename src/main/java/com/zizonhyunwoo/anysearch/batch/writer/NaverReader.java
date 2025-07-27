@@ -55,7 +55,7 @@ public class NaverReader implements ItemReader<String> {
         System.out.println("uriBuilder = " + uriBuilder.toUriString());
         ResponseEntity<String> result = restTemplate.exchange(
 //                uriBuilder.toUriString(),
-                "https://openapi.naver.com/v1/search/shop.json?query=%EA%B0%A4%EB%9F%AD%EC%8B%9C&display=10&start=1&sort=sim&exclude=used:rental:cbshop",
+                "https://openapi.naver.com/v1/search/shop.json?query="+"삼성"+"&display=10&start=1&sort=sim&exclude=used:rental:cbshop",
                 HttpMethod.GET,
                 requestEntity,
                 String.class);

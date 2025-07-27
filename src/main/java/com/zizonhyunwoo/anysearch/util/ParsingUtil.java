@@ -30,4 +30,7 @@ public class ParsingUtil {
         }
         return data;
     }
+    public static String delb(String str) {
+        return str.replaceAll("<[^>]*>", "");
+    }
 }
