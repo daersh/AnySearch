@@ -1,4 +1,4 @@
-package com.zizonhyunwoo.anysearch.controller;
+package com.zizonhyunwoo.anysearch.batch.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +11,6 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -100,6 +94,16 @@ public class JobController {
     @GetMapping("/any_data/health")
     public String anyDataHealth() {
         Set<JobExecution> runningJobs = jobExplorer.findRunningJobExecutions(JOB_NAME);
+
+        if (!runningJobs.isEmpty()) {
+            return "already job started";
+        }
+        return "ready";
+    }
+
+    @GetMapping("/naver/health")
+    public String naverHealth() {
+        Set<JobExecution> runningJobs = jobExplorer.findRunningJobExecutions(JOB_NAVER);
 
         if (!runningJobs.isEmpty()) {
             return "already job started";
