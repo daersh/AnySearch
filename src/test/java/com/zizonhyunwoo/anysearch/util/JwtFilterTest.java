@@ -1,6 +1,7 @@
 package com.zizonhyunwoo.anysearch.util;
 
-import com.zizonhyunwoo.anysearch.domain.UserInfo;
+import com.zizonhyunwoo.anysearch.user.domain.UserInfo;
+import com.zizonhyunwoo.anysearch.common.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

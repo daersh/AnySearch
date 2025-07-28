@@ -1,8 +1,8 @@
 package com.zizonhyunwoo.anysearch.batch.process;
 
-import com.zizonhyunwoo.anysearch.domain.AnyData;
+import com.zizonhyunwoo.anysearch.anyData.domain.AnyData;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
-import com.zizonhyunwoo.anysearch.util.ParsingUtil;
+import com.zizonhyunwoo.anysearch.common.util.ParsingUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;

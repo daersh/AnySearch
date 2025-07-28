@@ -1,7 +1,9 @@
 package com.zizonhyunwoo.anysearch.domain;
 
-import com.zizonhyunwoo.anysearch.dao.AnyDataRepository;
-import com.zizonhyunwoo.anysearch.service.UserService;
+import com.zizonhyunwoo.anysearch.anyData.dao.AnyDataRepository;
+import com.zizonhyunwoo.anysearch.anyData.domain.AnyData;
+import com.zizonhyunwoo.anysearch.user.domain.UserInfo;
+import com.zizonhyunwoo.anysearch.user.service.UserService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

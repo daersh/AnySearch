@@ -36,20 +36,21 @@ public class SearchServiceImpl implements SearchService {
         if (request == null || request.isBlank()) {
             return searchAll(page,size,type);
         }
-        Query query;
-        if(type.equals("anydata_file")){
-            return searchFile(request,page,size,type);
-        }else {
-            query = new StringQuery(elasticsearchSearcher.createMultiMatchQuery(
-                    request,
-                    List.of("title", "description", "additionalFields.*"),
-                    "korean_tokenizer_advanced_analyzer"));
-        }
-        query.setPageable(PageRequest.of(page,size));
-        try {
 
+
+        if(type.equals("anydata_file"))
+            return searchFile(request,page,size,type);
+
+        Query query = new StringQuery(
+                elasticsearchSearcher.createMultiMatchQuery(request,
+                        List.of("title", "description", "additionalFields.*"),"korean_tokenizer_advanced_analyzer"))
+                .setPageable(PageRequest.of(page,size));
+
+        try {
             SearchHits<AnyDataDocument> hits = elasticsearchSearcher.search(query,type, AnyDataDocument.class);
+            // 검색 결과 전체 건수
             Long totalHits = hits.getTotalHits();
+            // 검색 결과
             List<AnyDataDocument> content = hits.stream().map(SearchHit::getContent).toList();
 
             return new SearchResponse(totalHits,content);

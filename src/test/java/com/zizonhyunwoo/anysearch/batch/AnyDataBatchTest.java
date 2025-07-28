@@ -1,10 +1,9 @@
 package com.zizonhyunwoo.anysearch.batch;
 
 import com.zizonhyunwoo.anysearch.batch.process.AnyDataProcessor;
-import com.zizonhyunwoo.anysearch.domain.AnyData;
-import com.zizonhyunwoo.anysearch.domain.UserInfo;
+import com.zizonhyunwoo.anysearch.anyData.domain.AnyData;
+import com.zizonhyunwoo.anysearch.user.domain.UserInfo;
 import com.zizonhyunwoo.anysearch.elastic.index.AnyDataDocument;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -86,4 +85,9 @@ public class AnyDataBatchTest {
         assertEquals("addDetail3", addInfos.get("addInfo3"));
     }
 
+    // 2. writer 테스트
+    @Test
+    public void AnyData_writer_테스트(){
+
+    }
 }

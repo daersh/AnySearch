@@ -1,6 +1,6 @@
 package com.zizonhyunwoo.anysearch.util;
 
-import com.zizonhyunwoo.anysearch.domain.UserInfo;
+import com.zizonhyunwoo.anysearch.user.domain.UserInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.Assertions;
