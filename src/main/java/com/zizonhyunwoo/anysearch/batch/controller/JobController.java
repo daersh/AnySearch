@@ -110,33 +110,4 @@ public class JobController {
         }
         return "ready";
     }
-
-    @GetMapping("/sample")
-    public String sampleData(@RequestParam String data) {
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("query", data)
-                .queryParam("display", "10")
-                .queryParam("start", "1")
-                .queryParam("sort", "sim")
-                .queryParam("exclude", "used:rental:cbshop");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Naver-Client-Id",id);
-        headers.add("X-Naver-Client-Secret",key);
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-        System.out.println("uriBuilder = " + uriBuilder.toUriString());
-        ResponseEntity<String> result = restTemplate.exchange(
-//                uriBuilder.toUriString(),
-                "https://openapi.naver.com/v1/search/shop.json?query="+data+"&display=10&start=1&sort=sim&exclude=used:rental:cbshop",
-                HttpMethod.GET,
-                requestEntity,
-                String.class);
-
-        System.out.println("result = " + result);
-
-        return result.getBody();
-    }
 }
