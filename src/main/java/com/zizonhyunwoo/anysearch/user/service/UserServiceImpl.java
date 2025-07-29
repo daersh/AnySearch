@@ -72,8 +72,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public String login(LoginRequest req, HttpServletResponse response) {
         UserInfo userinfo = userDao.findByNicknameOrEmail(req.getNicknameOrEmail(), req.getNicknameOrEmail());
-        System.out.println("userinfo = " + userinfo);
-        System.out.println("req = " + req);
         if (passwordEncoder.matches(req.getPassword(), userinfo.getPassword())) {
             String token = jwtUtil.createJwt(userinfo,"access");
             log.info("new user login success: {}",userinfo);

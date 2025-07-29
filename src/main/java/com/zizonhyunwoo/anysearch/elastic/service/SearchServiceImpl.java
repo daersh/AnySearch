@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.*;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.elasticsearch.core.query.StringQuery;
@@ -62,12 +63,13 @@ public class SearchServiceImpl implements SearchService {
 
     }
 
+
     private SearchResponse searchFile(String request, Integer page, Integer size, String type) {
-        Query query= new StringQuery(elasticsearchSearcher.createMultiMatchQuery(
-                request,
-                List.of("filename","attachment.content"),
-                "korean_tokenizer_advanced_analyzer"));
-        query.setPageable(PageRequest.of(page,size));
+
+        Query query = elasticsearchSearcher.createQuery(
+                request,page,size,List.of("filename","attachment.content"),"korean_tokenizer_advanced_analyzer"
+        );
+
         try {
 
             SearchHits<AnyDataFile> hits = elasticsearchSearcher.search(query,type, AnyDataFile.class);
