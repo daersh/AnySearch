@@ -1,47 +1,91 @@
-# docker-compose.yml
 version: '3.8'
 
 services:
-#  spring-boot-app:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        JAR_FILE: build/libs/AnySearch-0.0.1-SNAPSHOT.jar
-#    container_name: spring-boot-app
-#    ports:
-#      - "8081:8080"
-#    environment:
-#      - spring_elasticsearch_uris=http://elasticsearch:9200
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ady_db
-#      - SPRING_DATASOURCE_USERNAME=any
-#      - SPRING_DATASOURCE_PASSWORD=any
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-#    depends_on:
-#      - elasticsearch
-#      - db
-#    networks:
-#      - spring-boot-network
+  spring-boot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: build/libs/AnySearch-0.0.1-SNAPSHOT.jar
+    container_name: spring-boot-app
+    ports:
+      - "8081:8080"
+    environment:
+      # 변경된 부분: 엘라스틱 노드들 정의(장애시 다른곳 연결하도록 해줌)
+      - spring_elasticsearch_uris=http://es01:9200
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ady_db
+      - SPRING_DATASOURCE_USERNAME=any
+      - SPRING_DATASOURCE_PASSWORD=any
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      # 모든 노드가 준비된 후 구동
+      - es01
+      - es02
+      - es03
+      - db
+    networks:
+      - spring-boot-network
 
-  elasticsearch:
+  es01:
     build:
       context: .
       dockerfile: Dockerfile.elasticsearch
     image: custom-elasticsearch:8.17.6
-    container_name: elasticsearch_instance
+    container_name: es01
     environment:
-      - discovery.type=single-node
+      - node.name=es01
+      - cluster.name=my-es-cluster
+      - discovery.seed_hosts=es01,es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
+      # 외부와의 통신은 이 마스터 노드만 담당
       - "9200:9200"
-      - "9300:9300"
     volumes:
-      # 사용자 사전 및 동의어 사전 파일을 호스트의 ./searchDictionary/에서 컨테이너의 config/dictionary/로 마운트
       - ./searchDictionary/:/usr/share/elasticsearch/config/dictionary/
-      - esdata:/usr/share/elasticsearch/data # 데이터 영속성을 위해 볼륨 사용
+      - esdata01:/usr/share/elasticsearch/data
     networks:
       - spring-boot-network
+
+  es02:
+    build:
+      context: .
+      dockerfile: Dockerfile.elasticsearch
+    image: custom-elasticsearch:8.17.6
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=my-es-cluster
+      - discovery.seed_hosts=es01,es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - ./searchDictionary/:/usr/share/elasticsearch/config/dictionary/
+      - esdata02:/usr/share/elasticsearch/data
+    networks:
+      - spring-boot-network
+
+  es03:
+    build:
+      context: .
+      dockerfile: Dockerfile.elasticsearch
+    image: custom-elasticsearch:8.17.6
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=my-es-cluster
+      - discovery.seed_hosts=es01,es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - ./searchDictionary/:/usr/share/elasticsearch/config/dictionary/
+      - esdata03:/usr/share/elasticsearch/data
+    networks:
+      - spring-boot-network
+
   db:
     image: postgres:16-alpine
     container_name: postgres_db
@@ -50,15 +94,17 @@ services:
       POSTGRES_USER: any
       POSTGRES_PASSWORD: any
     ports:
-      - "5433:5432" # 외부 5433, 내부 5432
+      - "5433:5432"
     volumes:
       - dbdata:/var/lib/postgresql/data
     networks:
-      - spring-boot-network # 네트워크 통일
+      - spring-boot-network
 
-volumes:
-  esdata: # Elasticsearch 데이터 볼륨 정의
-  dbdata: # PostgreSQL 데이터 볼륨 정의
+volumes: # 각 노드별로 정의
+  esdata01:
+  esdata02:
+  esdata03:
+  dbdata:
 
 networks:
   spring-boot-network:
