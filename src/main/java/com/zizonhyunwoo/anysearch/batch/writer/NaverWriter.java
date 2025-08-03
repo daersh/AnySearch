@@ -43,18 +43,11 @@ public class NaverWriter implements ItemWriter<List<NaverData>> {
         }
     }
 
+    List<String> stopwords = Arrays.asList("대여","기변","기기변경","통신사","렌탈","kt","KT","lg","LG","sk","SK");
+
     private boolean checkData(NaverData naverData) {
-        return !naverData.getCategory2().equals("휴대폰") ||
-                naverData.getTitle().contains("대여")||
-                naverData.getTitle().contains("기변")||
-                naverData.getTitle().contains("기기변경")||
-                naverData.getTitle().contains("통신사")||
-                naverData.getTitle().contains("렌탈")||
-                naverData.getTitle().contains("kt")||
-                naverData.getTitle().contains("lg")||
-                naverData.getTitle().contains("sk")||
-                naverData.getTitle().contains("KT")||
-                naverData.getTitle().contains("LG")||
-                naverData.getTitle().contains("SK");
+        for (String stopword :  stopwords)
+            if (naverData.getTitle().contains(stopword)) return true;
+        return !naverData.getCategory2().equals("휴대폰");
     }
 }
