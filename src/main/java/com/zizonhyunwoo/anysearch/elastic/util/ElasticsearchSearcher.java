@@ -3,6 +3,7 @@ package com.zizonhyunwoo.anysearch.elastic.util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.IndexInformation;
@@ -75,6 +76,23 @@ public class ElasticsearchSearcher {
                         )
                 )
                 .withPageable(PageRequest.of(page,size))
+                .build();
+    }
+
+    public Query createQueryWithSort(String request, Integer page, Integer size, List<String> fields, String analyzer, String sortField, Sort.Direction direction) {
+        // Sort.Direction.DESC, 정렬 필드명
+        Sort sort = Sort.by(direction, sortField);
+
+        return NativeQuery.builder()
+                .withQuery(q-> q
+                        .match(m-> {
+                                    fields.forEach(m::field);
+                                    return m.query(request).analyzer(analyzer);
+                                }
+                        )
+                )
+                .withPageable(PageRequest.of(page,size))
+                .withSort(sort)
                 .build();
     }
 }
