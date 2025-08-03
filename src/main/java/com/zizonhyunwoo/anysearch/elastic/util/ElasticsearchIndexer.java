@@ -72,8 +72,8 @@ public class ElasticsearchIndexer {
                 Map<String, Object> indexSettings = new HashMap<>();
                 Map<String, Object> analysisSettings = objectMapper.readValue(this.analysisSettingsJson, Map.class);
 
-                indexSettings.put("number_of_shards", 1);
-                indexSettings.put("number_of_replicas", 0);
+                indexSettings.put("number_of_shards", 3);
+                indexSettings.put("number_of_replicas", 1);
                 indexSettings.put("analysis", analysisSettings);
                 settingsMap.put("index", indexSettings);
 
