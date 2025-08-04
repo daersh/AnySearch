@@ -27,7 +27,7 @@ public class NaverReader implements ItemReader<String> {
     @Value("${naver.url}")
     private String url;
     private Boolean flag = false;
-    private List<String> names = Arrays.asList("갤럭시","애플","스마트폰");
+    private List<String> names = Arrays.asList("갤럭시","애플","스마트폰","smartphone");
     private int cnt =0;
 
     @Override

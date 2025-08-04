@@ -43,11 +43,13 @@ public class NaverWriter implements ItemWriter<List<NaverData>> {
         }
     }
 
-    List<String> stopwords = Arrays.asList("대여","기변","기기변경","통신사","렌탈","kt","KT","lg","LG","sk","SK");
+    List<String> stopwords = Arrays.asList("대여","기변","기기변경","통신사","렌탈","kt","KT","lg","LG","sk","SK","미개봉","중고","새상품");
 
     private boolean checkData(NaverData naverData) {
         for (String stopword :  stopwords)
-            if (naverData.getTitle().contains(stopword)) return true;
+            if (naverData.getTitle().contains(stopword))
+                return true;
+
         return !naverData.getCategory2().equals("휴대폰");
     }
 }
