@@ -83,6 +83,7 @@ public class ElasticsearchFileIndexer {
 
     public void saveFile(String fileName, byte[] data) {
         try {
+            getIndexCoordinates("anydata_file");
             String base64Data = Base64.getEncoder().encodeToString(data);
 
             String id = UUID.randomUUID().toString();
@@ -122,8 +123,8 @@ public class ElasticsearchFileIndexer {
                 Map<String, Object> indexSettings = new HashMap<>();
                 Map<String, Object> analysisSettings = objectMapper.readValue(this.analysisSettingsJson, Map.class);
 
-                indexSettings.put("number_of_shards", 1);
-                indexSettings.put("number_of_replicas", 0);
+                indexSettings.put("number_of_shards", 3);
+                indexSettings.put("number_of_replicas", 2);
                 indexSettings.put("analysis", analysisSettings);
                 settingsMap.put("index", indexSettings);
 
