@@ -1,0 +1,29 @@
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+  - type: container
+    paths:
+      - '/var/lib/docker/containers/*/*.log'
+
+# ============================== Filebeat modules ==============================
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+# ======================= Elasticsearch output ==========================
+# 수집한 데이터를 Elasticsearch로 보냅니다.
+output.elasticsearch:
+  # 클러스터의 노드 주소들을 적어줍니다.
+  hosts: ["es01:9200", "es02:9200", "es03:9200"]
+
+# =============================== Kibana =====================================
+# Filebeat가 제공하는 기본 대시보드를 Kibana에 자동으로 설치하기 위한 설정입니다.
+#setup.kibana:
+#  host: "kibana:5601" # 나중에 키바나를 추가할 경우를 대비
+#
+processors:
+  - add_docker_metadata:
+  - drop_event:
+      when:
+        not:
+          contains:
+            container.name: "spring-boot-app"

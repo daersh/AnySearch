@@ -99,10 +99,27 @@ services:
     networks:
       - spring-boot-network
 
-volumes: # 각 노드별로 정의
+  filebeat:
+    build:
+      context: .
+      dockerfile: Dockerfile.filebeat
+    container_name: filebeat
+    user: root
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - filebeatdata:/usr/share/filebeat/data
+    networks:
+      - spring-boot-network
+    depends_on:
+      - es01
+      - spring-boot-app
+
+volumes:
   esdata02:
   esdata03:
   dbdata:
+  filebeatdata:
 
 networks:
   spring-boot-network:
