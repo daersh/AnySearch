@@ -11,14 +11,12 @@ services:
     ports:
       - "8081:8080"
     environment:
-      # 변경된 부분: 엘라스틱 노드들 정의(장애시 다른곳 연결하도록 해줌)
       - spring_elasticsearch_uris=http://es01:9200
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ady_db
-      - SPRING_DATASOURCE_USERNAME=any
-      - SPRING_DATASOURCE_PASSWORD=any
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
-      # 모든 노드가 준비된 후 구동
       - es01
       - es02
       - es03
@@ -26,22 +24,29 @@ services:
     networks:
       - spring-boot-network
 
-  es01: # 마스터 역할만 수행 -> volume 없어도 된다.
+  es01:
     build:
       context: .
       dockerfile: Dockerfile.elasticsearch
     image: custom-elasticsearch:8.17.6
     container_name: es01
+    volumes:
+      - ./certs/certs.p12:/usr/share/elasticsearch/config/certs/certs.p12
     environment:
       - node.name=es01
       - cluster.name=my-es-cluster
-      - node.roles=master # master 노드로서만 역할 수행한다.
+      - node.roles=master,data,ingest
       - discovery.seed_hosts=es01,es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=none
+      - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/certs/certs.p12
+      - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/certs/certs.p12
+      - xpack.security.http.ssl.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
-      - "9200:9200" # 외부 통신은 이 노드가 전담
+      - "9200:9200"
     networks:
       - spring-boot-network
 
@@ -54,12 +59,18 @@ services:
     environment:
       - node.name=es02
       - cluster.name=my-es-cluster
-      - node.roles=master,data,ingest # 마스터, 데이터, 파이프라인 관련 역할 수행한다.
+      - node.roles=master,data
       - discovery.seed_hosts=es01,es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=none
+      - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/certs/certs.p12
+      - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/certs/certs.p12
+      - xpack.security.http.ssl.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     volumes:
+      - ./certs/certs.p12:/usr/share/elasticsearch/config/certs/certs.p12
       - ./searchDictionary/:/usr/share/elasticsearch/config/dictionary/
       - esdata02:/usr/share/elasticsearch/data
     networks:
@@ -74,12 +85,18 @@ services:
     environment:
       - node.name=es03
       - cluster.name=my-es-cluster
-      - node.roles=master,data # 마스터와 데이터 역할 겸임
+      - node.roles=master
       - discovery.seed_hosts=es01,es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=none
+      - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/certs/certs.p12
+      - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/certs/certs.p12
+      - xpack.security.http.ssl.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     volumes:
+      - ./certs/certs.p12:/usr/share/elasticsearch/config/certs/certs.p12
       - ./searchDictionary/:/usr/share/elasticsearch/config/dictionary/
       - esdata03:/usr/share/elasticsearch/data
     networks:
@@ -90,8 +107,8 @@ services:
     container_name: postgres_db
     environment:
       POSTGRES_DB: ady_db
-      POSTGRES_USER: any
-      POSTGRES_PASSWORD: any
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
@@ -109,12 +126,27 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - filebeatdata:/usr/share/filebeat/data
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     networks:
       - spring-boot-network
     depends_on:
       - es01
       - spring-boot-app
 
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.6
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://es01:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
+    networks:
+      - spring-boot-network
+    depends_on:
+      - es01
 volumes:
   esdata02:
   esdata03:
